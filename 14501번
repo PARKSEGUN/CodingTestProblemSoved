@@ -1,0 +1,36 @@
+#include<iostream>
+#include<algorithm>
+
+using namespace std;
+
+int N;
+int arr[16][2];
+int result = 0;
+
+void solve(int num, int sum) {
+
+	if (num+arr[num][0] == N) {
+		result = max(sum, result);
+		return;
+	}
+	else if (num+arr[num][0] > N) {
+		result = max(sum-arr[num][1], result);
+		return;
+	}
+
+	for (int i = arr[num][0]; i < N; i++) {
+		solve(num + i, arr[num + i][1] + sum);
+	}
+}
+
+int main(void) {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i][0] >> arr[i][1];
+	}
+	for (int i = 0; i < N; i++) {
+		solve(i, arr[i][1]);
+	}
+
+	cout << result;
+}
