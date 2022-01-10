@@ -1,0 +1,54 @@
+//시간을 줄이고 메모리용량을 줄이는 방법을 배웠다.
+//시간을 줄이는 방법에넌 endl 대신 "\n" 을 사용하거나
+//	ios::sync_with_stdio(0);
+//	cin.tie(0);
+// 이 구문을 메인문에 넣어주면 된다.
+//또 메모리용량을 줄이는 방법은 비트마스크처럼 굳이 정수배열을 만들어 주지않아도
+//문제가 원하는것이 무엇인지 판단하고 배열이 필요한지 아닌지를 판단한다.
+//이번 문제에서는 특정한 수가 있는지 없는지 판단하는게 중요하기때문에 정수배열보다는 bool 배열을 사용했다.
+
+
+#include<iostream>
+#include<string>
+#include<vector>
+# define endl "\n"
+using namespace std;
+
+int N;
+bool arr[21];
+string str;
+int input;
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N;
+	for(int i=0;i<N;i++){
+		cin >> str;
+		if (str == "all" || str == "empty") {}
+		else {
+			cin >> input;
+		}
+		if (str == "add") {
+			arr[input] = true;
+		}
+		else if (str == "remove") {
+			arr[input] = false;
+		}
+		else if (str == "check") {
+			if (arr[input]) { cout << 1; }
+			else cout << 0;
+			cout << endl;
+		}
+		else if (str == "toggle") {
+			if (arr[input]) { arr[input] = false; }
+			else arr[input] = true;
+		}
+		else if (str == "all") {
+			for (int i = 1; i < 21; i++) { arr[i] = true; }
+		}
+		else if (str == "empty") {
+			for (int i = 1; i < 21; i++) { arr[i] = 0; }
+		}
+	}
+}
