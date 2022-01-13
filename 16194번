@@ -1,3 +1,4 @@
+//전에 풀었던 문제의 최솟값 구하는 문제
 #include<iostream>
 #include<algorithm>
 #include<vector>
