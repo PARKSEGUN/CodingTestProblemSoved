@@ -1,0 +1,46 @@
+
+
+#include<iostream>
+#define endl "\n"
+
+using namespace std;
+int N;
+int SUM;
+int input[21];
+bool visited[21];
+int arr[21];
+int result;
+void solve(int cnt,int range) {
+	if (cnt > 0) {
+		int sum = 0;
+		/*for (int i = 0; i < cnt; i++) {
+			cout << arr[i] << " ";
+		}cout << endl;*/
+		for (int i = 0; i < cnt; i++) {
+			sum += arr[i];
+		}
+		if (sum == SUM) { result++; }
+	}
+	for (int i = range; i < N; i++) {
+		if (!visited[i]) {
+			visited[i] = true;
+			arr[cnt] = input[i];
+			solve(cnt + 1, i + 1);
+			visited[i] = false;
+		}
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N>>SUM;
+
+	for (int i = 0; i < N; i++) {
+		cin >> input[i];
+	}
+
+	solve(0,0);
+	cout << result;
+}
