@@ -1,0 +1,62 @@
+#include<stdio.h>
+
+int main(void)
+{
+	int i;
+	int N;
+	int sum = 0;
+	char number[100];
+
+	int change;
+
+	scanf("%d", &N);
+
+	scanf("%s", number);
+
+	for (i = 0; i < N; i++)
+	{
+		if (number[i] == 48)
+		{
+			sum += 0;
+		}
+		else if (number[i] == 49)
+		{
+			sum += 1;
+		}
+		else if (number[i] == 50)
+		{
+			sum += 2;
+		}
+		else if (number[i] == 51)
+		{
+			sum += 3;
+		}
+		else if (number[i] == 52)
+		{
+			sum += 4;
+		}
+		else if (number[i] == 53)
+		{
+			sum += 5;
+		}
+		else if (number[i] == 54)
+		{
+			sum += 6;
+		}
+		else if (number[i] == 55)
+		{
+			sum += 7;
+		}
+		else if (number[i] == 56)
+		{
+			sum += 8;
+		}
+		else if (number[i] == 57)
+		{
+			sum += 9;
+		}
+	}
+	printf("%d", sum);
+
+	return 0;
+}
