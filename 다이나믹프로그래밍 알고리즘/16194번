@@ -1,0 +1,37 @@
+//전에 풀었던 문제의 최솟값 구하는 문제
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#define endl "\n"
+
+using namespace std;
+
+int N;
+int val[1002];
+int arr[1002];
+
+void Input() {
+	cin >> N;
+	for (int i = 1; i <= N; i++) { cin >> val[i]; }
+}
+void Solution() {
+	for (int i = 1; i <= N; i++) {
+		arr[i] = 10001;
+	}
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= i; j++) {
+			arr[i] = min(val[j]+arr[i-j], arr[i]);
+		}
+	}
+	cout << arr[N];
+}
+void Solve() {
+	Input();
+	Solution();
+}
+int main(void) {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+}
