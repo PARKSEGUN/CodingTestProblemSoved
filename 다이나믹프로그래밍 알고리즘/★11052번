@@ -1,0 +1,39 @@
+//해답 보고 해결
+// 다이나믹 프로그래밍이 어떻게 흘러가야되는지 다시 한번 알게됨
+//전에 구했던걸 다시 구하지 않게 하는 프로그램
+//한번 풀었던 과정을 다시 풀지 않음
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#define endl "\n"
+
+using namespace std;
+
+int N;
+int val[1002];
+int result = 0;
+int arr[1002];
+
+void Input() {
+	cin >> N;
+	for (int i = 1; i <= N; i++) { cin >> val[i]; }
+}
+void Solution() {
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= i; j++) {
+			arr[i] = max(val[j]+arr[i-j], arr[i]);
+		}
+	}
+	cout << arr[N];
+}
+void Solve() {
+	Input();
+	Solution();
+}
+int main(void) {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+}
