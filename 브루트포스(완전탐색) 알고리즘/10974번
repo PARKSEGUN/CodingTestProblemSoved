@@ -1,0 +1,27 @@
+//cout<<endl 은 cout<<"\n" 보다 시간이 더 오래걸리는 코드라는걸 기억하자
+
+#include<iostream>
+#define endl "\n"
+using namespace std;
+int N;
+bool visited[9];
+int arr[9];
+void solve(int cnt) {
+	if (cnt == N) {
+		for (int i = 0; i < N; i++) {
+			cout << arr[i] << " ";
+		}cout << endl;
+	}
+	for (int i = 1; i <= N; i++) {
+		if (!visited[i]) {
+			visited[i] = true;
+			arr[cnt] = i;
+			solve(cnt + 1);
+			visited[i] = false;
+		}
+	}
+}
+int main(void) {
+	cin >> N;
+	solve(0);
+}
