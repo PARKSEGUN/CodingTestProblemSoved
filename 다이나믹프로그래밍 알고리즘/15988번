@@ -1,0 +1,43 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#define endl "\n"
+#define MOD 1000000009
+using namespace std;
+
+int N, T;
+long long dp[1000001];
+
+void Input() {
+	cin >> N;
+}
+
+void Solution() {
+	if(dp[N]){ cout << dp[N] << endl; }
+	else {
+		dp[1] = 1; dp[2] = 2; dp[3] = 4;
+		for (int i = 4; i <= N; i++) {
+			dp[i] =( (dp[i - 3] + dp[i - 2])%MOD + dp[i - 1])%MOD;
+			dp[i] %= MOD;
+		}
+		cout << dp[N] << endl;
+	}
+}
+
+void Solve() {
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solution();
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
