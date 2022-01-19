@@ -1,0 +1,46 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#define endl "\n"
+#define MOD 10007
+using namespace std;
+
+int N;
+int dp[10001];
+int arr[10001];
+int result = 0;
+
+void Input() {
+	cin >> N;
+	for (int i = 1; i <= N; i++) {
+		cin >> arr[i];
+	}
+}
+
+void Solution() {
+	dp[1] = arr[1]; dp[2] = arr[1] + arr[2];
+	dp[3] = max(dp[2], max(arr[1] + arr[3], arr[2] + arr[3]));
+
+	for (int i = 4; i <= N; i++) {
+		dp[i] = dp[i - 3] + arr[i - 1] + arr[i];
+		dp[i] = max(dp[i], dp[i - 2] + arr[i]);
+		dp[i] = max(dp[i], dp[i - 1]);
+	}
+	//for (int i = 1; i <= N; i++) { cout << dp[i] << " "; }cout << endl;
+	cout << dp[N];
+}
+
+void Solve() {
+		Input();
+		Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
