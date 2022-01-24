@@ -1,0 +1,66 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#define endl "\n"
+
+using namespace std;
+
+queue<int> q;
+int N;
+
+void Input() {
+	cin >> N;
+
+}
+
+void Solution() {
+	string str;
+	int x;
+	for(int i=0;i<N;i++){
+		cin >> str;
+		if (str == "push") {
+			cin >> x;
+			q.push(x);
+		}
+		if (str == "pop") {
+			if (q.size() == 0) { cout << -1<<endl; }
+			else {
+				cout << q.front()<<endl;
+				q.pop();
+			}
+		}
+		if (str == "size") {
+			cout << q.size()<<endl;
+		}
+		if (str == "empty") {
+			cout << q.empty()<<endl;
+		}
+		if (str == "front") {
+			if (q.empty()) { cout << -1<<endl; }
+			else { cout << q.front()<<endl; }
+
+		}
+		if (str == "back") {
+			if (q.empty()) { cout << -1<<endl; }
+			else { cout << q.back()<<endl; }
+		}
+	}
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
