@@ -1,0 +1,74 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<deque>
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+int Start;
+vector<int> vec[11111];
+bool visited[1111];		//dfs
+bool visited_2[1111];		//bfs
+
+void Input() {
+	cin >> N>>M>>Start;
+}
+void dfs(int start) {
+	for (int i = 0; i < vec[start].size(); i++) {
+		if (!visited[vec[start][i]]) {
+			visited[vec[start][i]] = true;
+			cout << vec[start][i]<<" ";
+			  dfs(vec[start][i]);
+		}
+	}
+}
+
+deque<int> dq;
+void bfs(int start) {
+	dq.push_back(Start);
+	visited_2[Start] = true;
+
+	while (!dq.empty()) {
+		for (int i = 0; i < vec[dq.back()].size(); i++) {
+			if (!visited_2[vec[dq.back()][i]]) {
+				dq.push_front(vec[dq.back()][i]);
+				visited_2[vec[dq.back()][i]] = true;
+			}	
+		}
+		cout << dq.back()<<" ";
+		dq.pop_back();
+
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < M; i++) {
+		int x, y;
+		cin >> x >> y;
+		vec[x].push_back(y);
+		vec[y].push_back(x);
+		sort(vec[x].begin(), vec[x].end());
+		sort(vec[y].begin(), vec[y].end());
+	}
+	visited[Start] = true;
+	cout << Start << " ";
+	dfs(Start);
+	cout << endl;
+	bfs(Start);
+}
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
