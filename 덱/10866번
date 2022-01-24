@@ -1,0 +1,81 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#define endl "\n"
+
+using namespace std;
+
+deque<int> dq;
+int N;
+
+void Input() {
+	cin >> N;
+}
+
+void Solution() {
+	for (int i = 0; i < N; i++) {
+		string str;
+		int x;
+		cin >> str;
+		if (str == "push_front") {
+			cin >> x;
+			dq.push_front(x);
+		}
+		if (str == "push_back") {
+			cin >> x;
+			dq.push_back(x);
+		}
+		if (str == "pop_front") {
+			if (dq.empty()) { cout << -1 << endl; }
+			else {
+				cout << dq.front() << endl;
+				dq.pop_front();
+			}
+		}
+		if (str == "pop_back") {
+			if (dq.empty()) { cout << -1 << endl; }
+			else {
+				cout << dq.back() << endl;
+				dq.pop_back();
+			}
+		}
+		if (str == "size") {
+			cout << dq.size() << endl;
+		}
+		if (str == "empty") {
+			cout << (dq.empty() ? 1 : 0) << endl;
+		}
+		if (str == "front") {
+			if (dq.empty()) { cout << -1 << endl; }
+			else {
+				cout << dq.front() << endl;
+			}
+		}
+		if (str == "back") {
+			if (dq.empty()) { cout << -1 << endl; }
+			else {
+				cout << dq.back() << endl;
+			}
+		}
+		
+	}
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
