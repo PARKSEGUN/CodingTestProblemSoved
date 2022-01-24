@@ -1,0 +1,73 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+vector<int> vec[2222];
+bool visited[2222];
+vector<int> result;
+
+void Input() {
+	cin >> N >> M;
+
+}
+
+void dfs(int start) {
+	if (result.size() == 5) {
+		//for (int i = 0; i < result.size(); i++) { cout << result[i] << " "; }cout << endl;
+		cout << 1;
+		exit(0);
+	}
+
+	for (int i = 0; i < vec[start].size(); i++) {
+		if (!visited[vec[start][i]]) {
+			visited[vec[start][i]] = true;
+			result.push_back(vec[start][i]);
+			dfs(vec[start][i]);
+			visited[vec[start][i]] = false;
+			result.pop_back();
+		}
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < M; i++) {
+		int x, y;
+		cin >> x >> y;
+		vec[x].push_back(y);
+		vec[y].push_back(x);
+	}
+	for (int i = 0; i < N; i++) {
+		sort(vec[i].begin(), vec[i].end());
+	}
+	for (int i = 0; i < N; i++) {
+		visited[i] = true;
+		result.push_back(i);
+		dfs(i);
+		visited[i] = false;
+		result.clear();
+	}
+	cout << 0;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
