@@ -1,0 +1,78 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+
+vector<int> vec[22222];
+bool visited[22222];
+bool result_NO;
+int RED[22222];		//빨강은 1 파랑은 2
+
+void Input() {
+	cin >> N >> M;
+}
+
+void DFS(int start) {
+	if (result_NO) { return; }
+	for (int i = 0; i < vec[start].size(); i++) {
+		if (RED[start] == RED[vec[start][i]]) { result_NO = true; return; }
+	}
+
+	for (int i = 0; i < vec[start].size(); i++) {
+		if(!visited[vec[start][i]]){
+			visited[vec[start][i]] = true;
+			RED[start] == 1 ? RED[vec[start][i]] = 2 : RED[vec[start][i]] = 1;
+			DFS(vec[start][i]);
+		}
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < M; i++) {
+		int x, y;
+		cin >> x >> y;
+		vec[x].push_back(y);
+		vec[y].push_back(x);
+	}
+	for (int i = 1; i <= N; i++) {
+		if (!visited[i]) {
+			visited[i] = true;
+			RED[i] = 1;
+			DFS(i);
+		}
+	}
+	result_NO == true ? cout << "NO" << endl : cout << "YES" << endl;
+}
+
+void Solve() {
+	int K;
+	cin >> K;
+	for (int a = 0; a < K; a++) {
+		Input();
+		Solution();
+		for (int i = 1; i <= N; i++) {
+			vec[i].clear();
+			visited[i] = false;
+			RED[i] = 0;
+		}
+		result_NO = false;
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
