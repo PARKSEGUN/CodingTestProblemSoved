@@ -1,0 +1,106 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int T;
+int N;
+bool visited[333][333];
+int cnt[333][333];
+int x, xx, y, yy;
+queue<int> q[2];
+void Input() {
+	cin >> N;		//맵 크기
+	cin >> x >> y;		//start	
+	cin >> xx >> yy;		//end
+}
+
+void BFS(int a, int b) {
+	q[0].push(a);
+	q[1].push(b);
+	visited[a][b] = true;
+	while (!q[0].empty()) {
+		int ax = q[0].front();
+		int ay = q[1].front();
+		q[0].pop(); q[1].pop();
+
+		if (ax - 2 >= 0 && ay - 1 >= 0 && !visited[ax - 2][ay - 1]) {
+			visited[ax - 2][ay - 1] = true;
+			q[0].push(ax - 2); q[1].push(ay - 1);
+			cnt[ax - 2][ay - 1] = cnt[ax][ay]+1;
+		}
+		if (ax - 1 >= 0 && ay - 2 >= 0 && !visited[ax - 1][ay - 2]) {
+			visited[ax - 1][ay - 2] = true;
+			q[0].push(ax - 1); q[1].push(ay - 2);
+			cnt[ax - 1][ay - 2] = cnt[ax][ay] + 1;
+		}
+		if (ax + 2 < N && ay - 1 >= 0 && !visited[ax + 2][ay - 1]) {
+			visited[ax + 2][ay - 1] = true;
+			q[0].push(ax + 2); q[1].push(ay - 1);
+			cnt[ax + 2][ay - 1] = cnt[ax][ay] + 1;
+		}
+		if (ax + 1 < N && ay - 2 >= 0 && !visited[ax + 1][ay - 2]) {
+			visited[ax + 1][ay - 2] = true;
+			q[0].push(ax + 1); q[1].push(ay - 2);
+			cnt[ax +1][ay - 2] = cnt[ax][ay] + 1;
+		}
+		if (ax + 2 < N && ay + 1 < N && !visited[ax + 2][ay + 1]) {
+			visited[ax + 2][ay + 1] = true;
+			q[0].push(ax + 2); q[1].push(ay +1);
+			cnt[ax + 2][ay + 1] = cnt[ax][ay] + 1;
+		}
+		if (ax + 1 < N && ay + 2 < N && !visited[ax + 1][ay + 2]) {
+			visited[ax + 1][ay + 2] = true;
+			q[0].push(ax + 1); q[1].push(ay + 2);
+			cnt[ax +1][ay +2] = cnt[ax][ay] + 1;
+		}
+		if (ax - 2 >= 0 && ay + 1 < N && !visited[ax - 2][ay + 1]) {
+			visited[ax - 2][ay + 1] = true;
+			q[0].push(ax - 2); q[1].push(ay +1);
+			cnt[ax - 2][ay + 1] = cnt[ax][ay] + 1;
+		}
+		if (ax - 1 >= 0 && ay + 2 < N && !visited[ax - 1][ay + 2]) {
+			visited[ax - 1][ay + 2] = true;
+			q[0].push(ax - 1); q[1].push(ay + 2);
+			cnt[ax - 1][ay +2] = cnt[ax][ay] + 1;
+		}
+
+	}
+}
+
+void Solution() {
+	BFS(x, y);
+	cout << cnt[xx][yy]<<endl;
+}
+
+
+
+void Solve() {
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solution();
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				visited[i][j] = 0;
+				cnt[i][j] = 0;
+			}
+		}
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
