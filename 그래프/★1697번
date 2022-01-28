@@ -1,0 +1,66 @@
+//충분히 풀어낼 수 있는 문제를 집중하지 못하고 시간만 날림
+//집중하자
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+bool visited[111111];
+
+void Input() {
+	cin >> N >> M;
+}
+queue<int> q[2];
+void Solution() {
+	q[0].push(N);
+	q[1].push(0);
+	while (!q[0].empty()) {
+		int x, cnt;
+		x = q[0].front();
+		cnt = q[1].front();
+		if (x == M) { cout << cnt; return; }
+		q[0].pop(); q[1].pop();
+		if (x - 1 >= 0 && !visited[x-1]) {
+			visited[x - 1]=true;
+			q[0].push(x - 1);
+			q[1].push(cnt + 1);
+		}
+		if (x + 1 < 100001 && !visited[x + 1]) {
+			visited[x + 1]=true;
+			q[0].push(x + 1);
+			q[1].push(cnt + 1);
+		}
+		if (x * 2 < 100001 && !visited[x * 2]) {
+			visited[x * 2]=true;
+			q[0].push(x *2);
+
+			q[1].push(cnt + 1);
+		}
+	}
+}
+
+
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
