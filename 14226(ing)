@@ -16,6 +16,7 @@ int N;
 bool visited[2222];
 queue<int> q[3];		//[0]은 현재 값, [1]은 걸리는 시간, [2]은 클립보드 값
 
+//check
 
 void Input() {
 	cin >> N;
@@ -79,3 +80,4 @@ int main(void) {
 
 	Solve();
 }
+
