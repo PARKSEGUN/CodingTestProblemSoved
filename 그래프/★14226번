@@ -1,0 +1,75 @@
+//이 문제는 처음에 visited 변수로 정점을 다시 한번 들어가지 않게 만들어 주었다
+//하지만 화면에 똑같은 개수의 이모티콘이 있어도 클립보드에 다른 값들이 들어있을 수 있다는 것을 알게 되었고
+//어떻게 하면 구분을 할 수 있을지 고민해 보았지만 해결하지못했다.
+//블로그를 찾아보니 visited 변수를 2차원으로 하여 visited[][] 에 [화면의 이모티콘 개수][클립보드의 이모티콘 개수]로 나누어 주어 해결하는 것을 발견하였다.
+//좀 더 세련되게 생각을 해보자
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+bool visited[2222][2222];		//[현재값][클립보드 값]
+queue<int> q[3];		//[0]은 현재 값, [1]은 걸리는 시간, [2]은 클립보드 값
+
+void Input() {
+	cin >> N;
+}
+void BFS() {
+	q[0].push(1); q[1].push(0); q[2].push(0);
+	visited[1][0] = true;
+	while (!q[0].empty()) {
+		int here = q[0].front();
+		int cnt = q[1].front();
+		int board = q[2].front();
+		q[0].pop(); q[1].pop(); q[2].pop();
+		if (here == N) { cout << cnt; exit(0); }
+		if (here > 0&&!visited[here][here]&&here<=1000) {		//복사
+			visited[here][here] = true;
+			q[0].push(here);
+			q[1].push(cnt+1);
+			q[2].push(here);
+		}
+		if (board > 0&&!visited[here+board][board]&&here+board<=1000) {		//붙여넣기
+			visited[here+board][board] = true;
+			q[0].push(here+board);
+			q[1].push(cnt + 1);
+			q[2].push(board);
+		}
+		if (here-1 > 0&&!visited[here-1][board]&&here-1<=1000) {		//제거
+			visited[here-1][board] = true;
+			q[0].push(here-1);
+			q[1].push(cnt + 1);
+			q[2].push(board);
+		}
+	}
+}
+
+void Solution() {
+	BFS();
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+
+}
+
+
