@@ -1,0 +1,106 @@
+//많은 것을 알게해준 문제이다
+//처음에 이 문제를 해결했고 제출했을때에 메모리 초과가 발생했다. 메모리 초과가 발생해서 대체 어디서 얼마나 잡아먹길래 메모리초과가 궁금했고 현재 코드가 지금 얼마나
+//메모리를 잡아먹고있는지 알아보는 방법을 배웠다. 그렇게 메모리를 얼마나 잡아먹는지 확인했는데 터무늬 없이 많은 양의 메모리를 잡아먹고있었다.
+//아예 코드를 바꾸기로하고 짜보았지만 도저히 참지 못해 블로그를 확인했지만 역시 간단한 문제였다.
+//나는 BFS로 4가지 모든 방향을 탐색해 나가면서 x,y값을 넣어주고 마지막 [N-1][M-1] 까지 탐색하는 코드를 짯다면
+//이 블로그저자는 맵 변수를 또하나 만들어주고 각각의 값에다가 그때까지 부셔온 벽돌의 최솟값을 저장하면서 내려간다.
+//내 코드와의 차이점은 나는 마지막까지 모든 경우의수를 다 따진다는 것이였고, 이 분은 작은 값만 골라서 내려간다는 점이였다.
+//또한 나처럼 큐에다가 모든 값을 집어 넣는 것이아니라 내가 지금 가야할곳까지의 좌표의 벽돌값과 내가 지금까지 깨온 벽돌의 값을 if 문으로 비교하여 
+//지금 내 좌표의 벽돌값이 '더 작을 때에만' 큐에 값을 넣어주는 식이여서 속도에서 어마어마한 차이가 났다.
+//불필요한 코드를 없앨수있고 어느 부분에서 시간과 메모리 손실이 일어나는지를 알 수있게하자
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+bool map[111][111];
+bool visited[111][111];
+
+void Input() {
+	cin >> M >> N;
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = false; }
+			else { map[i][j] = true; }
+
+		}
+	}
+}
+queue<int> q[2];
+int result = INT_MAX;
+int Move[2][4] = { {0,-1,1,0},
+				{1,0,0,-1} };
+
+int brea[111][111];
+void BFS() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			brea[i][j] = 999999;
+		}
+	}
+	brea[0][0] = 0;
+	q[0].push(0); q[1].push(0);
+	visited[0][0] = true;
+	while (!q[0].empty()) {
+		int y = q[0].front();
+		int x = q[1].front();
+		//cout << y << " " << x << " " << cnt << endl;
+		q[0].pop(); q[1].pop();
+		for (int i = 0; i < 4; i++) {
+			if (visited[y + Move[0][i]][x + Move[1][i]] == 0) {
+				if (y + Move[0][i] < N && y + Move[0][i] >= 0) {
+					if (x + Move[1][i] < M && x + Move[1][i] >= 0) {
+
+						if (map[y + Move[0][i]][x + Move[1][i]] == 1) {
+							if (brea[y + Move[0][i]][x + Move[1][i]] > brea[y][x] + 1) {
+								brea[y + Move[0][i]][x + Move[1][i]] = brea[y][x] + 1;
+									q[0].push(y + Move[0][i]); q[1].push(x + Move[1][i]);
+							}
+						}
+						else if (map[y + Move[0][i]][x + Move[1][i]] == 0) {
+							if (brea[y + Move[0][i]][x + Move[1][i]] > brea[y][x] ) {
+								brea[y + Move[0][i]][x + Move[1][i]] = brea[y][x] ;
+								q[0].push(y + Move[0][i]); q[1].push(x + Move[1][i]);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	cout << brea[N - 1][M - 1];
+}
+
+void Solution() {
+	BFS();
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+
+}
+
+
+
+
