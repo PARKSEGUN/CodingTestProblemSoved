@@ -1,0 +1,51 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+bool Check[2222222];
+int val[22];
+int arr[22];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> val[i]; }
+}
+
+void Solution(int cnt, int ran) {
+	int sum = 0;
+	for (int i = 0; i < cnt; i++) {sum += arr[i];}
+	Check[sum] = true;
+
+	for (int i = ran; i < N; i++) {
+		arr[cnt] = val[i];
+		Solution(cnt + 1, i+1);
+	}
+}
+
+void Solve() {
+	Input();
+	Solution(0,0);
+	for (int i = 0; i < 2222222; i++) {
+		if (!Check[i]) { cout << i; break; }
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
