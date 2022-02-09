@@ -4,7 +4,6 @@
 #include<climits>
 #include<cmath>
 #define endl "\n"
-
 using namespace std;
 
 
