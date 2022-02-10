@@ -6,7 +6,6 @@
 #define endl "\n"
 using namespace std;
 
-
 void Input() {
 
 }
@@ -16,11 +15,8 @@ void Solution() {
 }
 
 void Solve() {
-
-
 		Input();
 		Solution();
-
 }
 
 int main(void) {
