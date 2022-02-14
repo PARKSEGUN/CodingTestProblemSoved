@@ -1,0 +1,77 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+int Arr[11];
+int AArr[11];
+void Input() {
+	cin >> N;
+	int a;
+	for(int i=0;i<N;i++){
+		cin >> Arr[i];
+		AArr[i] = Arr[i];
+	}
+}
+
+int result = 0;
+
+void Energe(int arr[],int sum) {
+	int cnt = 0;
+	for (int i = 0; i < N; i++) {
+		if (arr[i] != 0) {
+			cnt++;
+		}
+	}
+	if (cnt == 2) {
+		result = max(sum, result);
+		return; }
+	cnt = 0;
+	vector<int> vec;
+	for (int i = 1; i < N-1; i++) {
+		if (arr[i] != 0) {
+			int x1, x2;
+			int idx = i-1;
+			while (arr[idx]==0) {
+				idx--;
+			}
+			x1 = arr[idx];
+			idx = i + 1;
+			while (arr[idx] == 0) {
+				idx++;
+			}
+			x2 = arr[idx];
+			arr[i] = 0;
+			Energe(arr, sum+(x1*x2));
+			arr[i] = AArr[i];
+		}
+	}
+}
+
+void Solution() {
+	Energe(Arr,0);
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+
+}
