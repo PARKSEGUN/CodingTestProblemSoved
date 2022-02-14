@@ -1,0 +1,90 @@
+//BFS로 해결하려고했지만 코딩을 작성하던중에 너무나 코드가 엉망이고 지져분해서 블로그를 참조해서 해결했다.
+//코드를 어떤식으로 작성해야 깔끔하고 잘 읽어지는지 알게되었다.
+//많은 도움이 되는 코딩 방식이였다
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+char map[22][22];
+vector<int> coin;
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+int result = 11;
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 'o') { coin.push_back(i); coin.push_back(j); }
+		}
+	}
+}
+
+bool OUT(int x,int y) {
+	if (x < 0 || x >= N || y < 0 || y >= M) { return true; }
+	return false;
+}
+
+void MOVE(int x,int y,int xx,int yy,int cnt,int dir) { 
+	if (result <= cnt) { return; }
+	
+	int nx = x + dx[dir];		//이동한 값
+	int ny = y + dy[dir];
+	int nxx = xx + dx[dir];
+	int nyy = yy + dy[dir];
+	
+	if (OUT(nx, ny) && OUT(nxx, nyy)) { return; }		//둘다 탈락
+	else if (OUT(nx, ny)==true && OUT(nxx, nyy)==false) {		//하나만 탈락
+		result = min(result, cnt);
+		return;
+	}
+	else if (OUT(nx, ny)==false && OUT(nxx, nyy)==true) {
+		result = min(result, cnt);
+		return;
+	}
+	
+	if (map[nx][ny] == '#') { nx = x; ny = y; }
+	if (map[nxx][nyy] == '#') { nxx = xx; nyy = yy; }
+
+	for (int i = 0; i < 4; i++) {
+		MOVE(nx, ny, nxx, nyy, cnt + 1, i);
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < 4; i++) {
+		MOVE(coin[0], coin[1], coin[2], coin[3], 1, i);
+	}
+	if (result > 10) { cout << -1; }
+	else { cout << result; }
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	Solve();
+
+}
+
+
+
+
