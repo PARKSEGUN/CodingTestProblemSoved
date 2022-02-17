@@ -1,0 +1,65 @@
+// 첫번째 나와있는 예제를 맞추고 제출했지만 틀렸다고 나왔고 이유를 찾아보니까 모든공간이 빈공간으로 나와져있을때에 오류가 발생했다.
+//내가 처음에 짜보았던 코드는 가로 세로 네모칸 3가지를 다 확인해서 빈칸(0)이 하나만 있는 줄이랑 네모칸을 찾아서 숫자를 채워주는 방식으로 작성을 했던 것이문제였다.
+//풀다가 결국 블로그를 확인했고 블로그 저자는 가로 세로 네모칸에 각각 어떤 값들이 들어있는지를 bool 변수로 체크를 해놓은 다음에 0,0부터 8,8까지 모든 칸을 확인해서 빈칸(0)에
+//들어갈 수 있는 값들을 계속 넣어주고 빼고 다시 넣어주면서 모든 가능한 경우의 수를 가장 빠르게 찾아내는 알고리즘이였다.
+
+#include<iostream>
+#include<cmath>
+
+using namespace std;
+
+int map[10][10];
+bool row[10][10];
+bool col[10][10];
+bool square[10][10];
+
+void print() {
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cout << map[i][j] << " ";
+		}cout << endl;
+	}
+}
+int zero_cnt = 0;
+
+void Sudoku(int x,int y) {
+
+	if (x==8&&y==9) { print(); exit(0); }
+	if (y == 9) { x++; y = 0; }
+
+	if (map[x][y] == 0) {
+		for (int k = 1; k < 10; k++) {
+			if (row[x][k] == false && col[y][k] == false && square[x / 3 * 3 + y / 3][k] == false) {
+				map[x][y] = k;
+				row[x][k] = true;
+				col[y][k] = true;
+				square[x / 3 * 3 + y / 3][k] = true;
+				Sudoku(x,y+1);
+				map[x][y] = 0;
+				row[x][k] = false;
+				col[y][k] = false;
+				square[x / 3 * 3 + y / 3][k] = false;
+			}
+		}
+	}
+	else { Sudoku(x,y+1); }
+
+
+}
+
+int main(void) {
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cin >> map[i][j];
+			if (map[i][j] != 0) {
+				row[i][map[i][j]] = true;
+				col[j][map[i][j]] = true;
+				square[i / 3 * 3 + j / 3][map[i][j]] = true;
+			}
+			else { zero_cnt++; }
+		}
+	}
+	Sudoku(0,0);
+
+
+}
