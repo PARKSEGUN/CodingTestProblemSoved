@@ -1,0 +1,150 @@
+//처음에 코드를 작성했는데 반례들은 다 맞지만 답이 틀렸다고 해서 고쳐봣지만 어디서 틀렸는지 찾지 못함
+//후에 시간이 지나고 중급과정에서 다시 이 문제를 풀었을때는 해결했다.
+
+#include<iostream>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+
+using namespace std;
+
+int K;
+char arr[10];
+bool visited[10];
+int test[10];
+bool find_zero;
+long long int maxx = INT_MIN;
+long long int minn= INT_MAX;
+void asdf() {
+	int sum = 0;
+	for (int i = 0; i < K; i++) {
+		if (arr[i] == '<') {
+			if (test[i] < test[i + 1]) { sum++; }
+		}
+		else {
+			if (test[i] > test[i + 1]) { sum++; }
+		}
+	}
+	if (sum == K) {
+		long long int a=0;
+		for (int i = 0; i < K+1; i++) {
+			a += test[i] * pow(10, K - i);
+		}
+		maxx = max(a, maxx);
+		minn = min(a, minn);
+	}
+}
+void solve(int cnt) {
+	if (cnt == K+1) {
+		asdf();
+		/*for (int i = 0; i < K+1; i++) {
+			cout << test[i];
+		}cout << endl;*/
+	}
+	for (int i = 0; i <= 9; i++) {
+		if (!visited[i]) {
+			visited[i] = 1;
+			test[cnt] = i;
+			solve(cnt + 1);
+			visited[i] = 0;
+		}
+	}
+}
+
+int main(void) {
+	cin >> K;
+	for (int i = 0; i < K; i++) {
+		cin >> arr[i];
+	}
+	solve(0);
+	if (int(maxx / pow(10, K)) == 0) { cout << 0; }
+	cout << maxx<<endl;
+	if (int(minn / pow(10, K)) == 0) { cout << 0; }
+	cout << minn << endl;
+}
+
+//////////////////////////////////////////////스스로 다시 풀었던 방법
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+char comp[10];
+int val[10] = { 0,1,2,3,4,5,6,7,8,9 };
+int arr[15];
+bool visited[10];
+int MAX[10];
+int MIN[10];
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> comp[i]; }
+}
+bool first;
+void DFS(int cnt, int now) {
+	if (cnt == N) {
+		if (first == false) {
+			for (int i = 0; i < N + 1; i++) {
+				MIN[i] = arr[i];
+				first = true;
+			}
+		}
+		for (int i = 0; i < N + 1; i++) {
+			MAX[i] = arr[i];
+		}
+
+	}
+	for (int i = 0; i < 10; i++) {
+		if (comp[cnt] == '>') {
+			if (now > val[i] && visited[i] == false) {
+				arr[cnt + 1] = i;
+				visited[i] = true;
+				DFS(cnt + 1, i);
+				visited[i] = false;
+			}
+		}
+		if (comp[cnt] == '<') {
+			if (now < val[i] && visited[i] == false) {
+				arr[cnt + 1] = i;
+				visited[i] = true;
+				DFS(cnt + 1, i);
+				visited[i] = false;
+			}
+		}
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < 10; i++) {
+		arr[0] = i;
+		visited[i] = true;
+		DFS(0, i);
+		visited[i] = false;
+	}
+	for (int i = 0; i < N + 1; i++) { cout << MAX[i]; }cout << endl;
+	for (int i = 0; i < N + 1; i++) { cout << MIN[i]; }
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
