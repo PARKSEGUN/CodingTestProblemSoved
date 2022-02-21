@@ -1,0 +1,124 @@
+//문제 해결하는데에는 어렵지 않았지만 시간을 줄이는데에 애먹은 문제이다.
+//내가 작성했던 코드에는 반례가 너무 많아서 시간초과가 계속 발생했고
+//조건문으로 가지치기를 한 후에야 정답처리를 받을 수 있었다.
+//다른 사람들은 어떤식으로 해결하였는지 궁금했다.
+//주로 방문해서 확인했던 얍문의 블로그를 들어가서 확인해 봤더니 블로그 저자는 이 bool alphabet[26] 을 사용해서 알파벳의 사용여부를 배열에 저장해서
+// 추가로 a 서부터 차례로(a,n,t,i,c 제외하고) K-5 개 만큼 추가로 배열에 넣어주고 입력받은 문자열을 만들 수 있는지를 판단하는 식으로 작성하였다. 속도차이가 2배정도 가까이 났다
+//어떤식으로 코드를 작성해야 시간을 줄일 수 있는지 더 알아가자
+
+#include<iostream>         
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<deque>
+#include<queue> 
+
+#define endl "\n"
+
+using namespace std;
+
+int N, K;
+vector<char> vec[55];
+vector<char> alp;
+int x = 0;
+void Input() {
+	cin >> N >> K;
+	K -= 5;
+	string str;
+	for (int i = 0; i < N; i++) {
+		cin >> str;
+		int cnt = 0;
+		for (int j = 0; j < str.size(); j++) {
+			if (str[j] != 'a' && str[j] != 'n' && str[j] != 't' && str[j] != 'i' && str[j] != 'c') {
+				bool chk = false;
+				for (int k = 0; k < vec[i].size(); k++) {
+					if (vec[i][k] == str[j]) { chk = true; }
+				}
+				if (chk == false) {
+					vec[i].push_back(str[j]);
+					cnt++;
+				}
+				if (cnt > K) { x++; vec[i].clear(); break; }
+			}
+		}
+	}
+	if (K < 0) { cout << 0; exit(0); }
+	if (vec[0].size() > 0) {
+		alp.push_back(vec[0][0]);
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < vec[i].size(); j++) {
+			bool chk = false;
+			for (int k = 0; k < alp.size(); k++) {
+				if (vec[i][j] == alp[k]) { chk = true; }
+			}
+			if (chk == false) { alp.push_back(vec[i][j]); }
+		}
+	}
+	/*for (int i = 0; i < N; i++) {
+		for (int j = 0; j < vec[i].size(); j++) {
+			cout << vec[i][j] << " ";
+		}cout << endl;
+	}
+	for (int i = 0; i < alp.size(); i++) {
+		cout << alp[i] << " ";
+	}cout << endl;*/
+}
+bool visited[30];
+char  arr[30];
+int result = 0;
+void DFS(int cnt, int ran) {
+	int sum = 0;
+	if (cnt == K) {
+		for (int i = 0; i < N; i++) {
+			int cntt = 0;
+			for (int j = 0; j < vec[i].size(); j++) {
+				for (int k = 0; k < cnt; k++) {
+					if (vec[i][j] == arr[k]) { cntt++; }
+				}
+			}
+			if (cntt == vec[i].size()) { sum++; }
+		}
+		result = max(sum, result);
+	}
+	 if (alp.size()<K&&cnt == alp.size()) {
+		for (int i = 0; i < N; i++) {
+			int cntt = 0;
+			for (int j = 0; j < vec[i].size(); j++) {
+				for (int k = 0; k < cnt; k++) {
+					if (vec[i][j] == arr[k]) { cntt++; }
+				}
+			}
+			if (cntt == vec[i].size()) { sum++; }
+		}
+		result = max(sum, result);
+	}
+
+
+	for (int i = ran; i < alp.size(); i++) {
+		arr[cnt] = alp[i];
+		DFS(cnt + 1, i + 1);
+	}
+}
+
+void Solution() {
+	DFS(0, 0);
+	cout << result - x;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
+
