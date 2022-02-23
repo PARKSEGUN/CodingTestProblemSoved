@@ -1,0 +1,140 @@
+//처음에 풀었던 2중 for문 방법
+//시간이 총 32ms 
+#include<iostream>
+#include<string>
+#include<vector>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+vector<int> vec;
+void Input()
+{
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		int a;
+		cin >> a;
+		vec.push_back(a);
+	}
+}
+int result;
+void Solution()
+{
+	for (int i = 0; i < N; i++) {
+		int sum = 0;
+		for (int j = i; j < N; j++) {
+			sum += vec[j];
+			if (sum == M) { result++; }
+			else if (sum > M) { break; }
+		}
+	}
+	cout<<result;
+}
+
+void Solve()
+{
+	Input();
+	Solution();
+}
+
+int main(void)
+{
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
+
+
+//2번째 풀었던 방법
+//반복문 2개를 사용했지만 필요없는 과정을 생략하는 방법
+//0 ms 걸림
+#include<iostream>
+#include<string>
+#include<vector>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+vector<int> vec;
+void Input()
+{
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		int a;
+		cin >> a;
+		vec.push_back(a);
+	}
+}
+int result;
+void Solution()
+{
+	int start = 0, end = 0, sum = 0;
+	for (int i = 0; i < N; i++) {
+		sum += vec[i];
+		while (sum >= M) {
+			if (sum == M) {
+				result++;
+				sum -= vec[start]; start++;
+			}
+			else if (sum > M) {
+				sum -= vec[start];
+				start++;
+			}
+		}
+	}
+	cout << result;
+}
+
+void Solve()
+{
+	Input();
+	Solution();
+}
+
+int main(void)
+{
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
+
+//반복문 한가지를 사용하는 방법(블로그에서 가져옴)
+// int a[n+1]은 왜 가능한지 아직 모르겠음
+//걸리는 시간 4ms
+#include <iostream> 
+using namespace std;
+int n,m; int count = 0;
+int main() {
+cin >> n >> m;
+int a[n+1];
+for(int i=0;i<n;i++) {
+cin >> a[i]; 
+} 
+int start=0,end=0; int result = a[0];
+while(start<=end && end<n) {
+if(result<m) {
+result+=a[++end]; 
+} 
+else if(result==m) {
+count++; result+=a[++end]; 
+} 
+else if(result>m) {
+result -=a[start++];
+if(start>end) {
+end = start; result = a[start];
+}
+} 
+} 
+cout << count; }
+
+
