@@ -1,0 +1,46 @@
+#include<iostream>
+#include<string>
+#include<vector>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+vector<int> vec;
+void Input(){
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		int a;
+		cin >> a;
+		vec.push_back(a);
+	}
+}
+int result=111111;
+void Solution(){
+	int start = 0, end = 0, sum = 0;
+	for (int i = 0; i < N; i++) {
+		sum += vec[i];
+		while (sum >= M) {
+				sum -= vec[start];
+				result =min(result, i - start + 1);
+				start++;
+		}
+	}
+	if (result == 111111) { cout << 0; return; }
+	cout << result;
+}
+
+void Solve(){
+	Input();
+	Solution();
+}
+
+int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
