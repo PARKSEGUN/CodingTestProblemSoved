@@ -1,0 +1,61 @@
+//처음에는 N까지 존재한는 소수를 모두 구하는 알고리즘을 작성하였지만 시간초과가 발생하였고
+//M이라는 합을 만드는데에 사용하지 않는 소수들을 제외한 소수를 구하였지만 반례가 발생하였고
+//찾아보니 N까지의 모든 소수를 찾아내는데 가장 대표적인 에라토스테네스의 체를 복습하게되었다.
+
+#include<iostream>
+#include<string>
+#include<vector>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+bool chk[4444444];
+vector<int> vec;		//소수가 들어있는 벡터
+void Input(){
+	cin >> N;
+}
+
+void Solution(){
+
+	if (N == 1) { cout << 0; exit(0); }
+	for (int i = 2; i * i <= N; i++) {		//에라토스테네스의 체
+		if (chk[i] == false) {
+			for (int j = i * i; j <= N; j += i) {
+				chk[j] = true;
+			}
+		}
+	}
+	for (int i = 2; i <= N; i++) {
+		if (chk[i] == false) { vec.push_back(i); }
+	}
+	int start = 0; 
+	int result = 0;
+	int sum = 0;
+	for (int i = 0; i < vec.size(); i++) {
+		sum += vec[i];
+		while (sum >= N) {
+			if (sum == N) {
+				sum -= vec[start]; result++; start++; 
+			}
+			else if (sum > N) { sum -= vec[start]; start++; }
+		}
+	}
+	cout << result;
+}
+
+void Solve(){
+	Input();
+	Solution();
+}
+
+int main(void){
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
