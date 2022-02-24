@@ -1,0 +1,73 @@
+lower_bound와 upper_bound 둘 다 이진탐색 기반의 탐색법이다. 
+이진탐색 기반이므로 배열이나 리스트는 '항상' 오름차순으로 정렬되어있어야 한다.
+두 탐색법의 차이
+lower_bound는 특정한  key값 보다 같거나 큰 숫자가 배열 몇 번째에서 등장하는 지를 찾기위함
+upper_bound는 특정한 key값 초과하는 숫자가 배열에 몇 번째에서 처음 등장하는 지를 찾기 위함
+
+여기서 중요한 점은 ★ 표시에서 arr을 빼주는 코드를 작성하게 되는데 그 이유는 lower_bound, upper_bound는 둘다 iterator를 반환하기 때문이다.
+값이 아니라 인덱스 주소값을 나타낸다고 생각하자 따라서 배열은 arr을 빼주게 되고 vector는 vec.begin() 을 빼주게 되는것이다.
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+
+	int arr[6] = { 1,2,3,4,5,6 };
+  //★
+	cout << "lower_bound(6) : " << lower_bound(arr, arr + 6, 6) - arr;
+
+    // 결과 -> lower_bound(6) : 5
+
+	return 0;
+}
+
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+
+	vector<int> arr = { 1,2,3,4,5,6 };
+    //★
+	cout << "upper_bound(3) : " << upper_bound(arr.begin(), arr.end(), 3) - arr.begin();
+
+    // 결과 -> upper_bound(3) : 3
+	return 0;
+}
+
+백준 2143번을 해결할때 푸는 방식은 같았지만 내가 작성했던 코드가 계속 시간초과가 발생했던 이유가 이것이였다.
+내가 작성한 코드는 처음부터 끝까지 확인해서 같은 값의 개수를 올려주는 방식이였으나
+이 알고리즘을 사용하게된다면 start end mid 를 사용하는 이진탐색으로 O(logN)으로 탐색이 가능해지기에 통과가 가능했다.
+어떤식으로 lower_bound 알고리즘이 진행되는지 알아보자
+lower_bound를 직접 구현--------------------------------------------
+int mylower_bound(int * arr, int n, int key){
+    int start = 0;
+    int end = n;
+ 
+    int mid = n;
+    while(end - start >0){  //start 가 end 와 같지 않고, 넘지 않을 때
+        mid = (start+end)/2;    //중앙 index
+ 
+        if(arr[mid] < key){ //key 값이 중앙 값보다 크면
+            start = mid + 1;//mid 보다 오른쪽으로
+        }else{  //key 값이 중앙값보다 작거나 같으면
+            end = mid;  //mid 포함 왼쪽 (포함하는 이유는 key값과 같은게 없을 때 큰수중 가장 작은값을 위해)
+        }
+ 
+    }
+    return end+ 1;
+}
+-------------------------------------------------------------------------------------
+이 알고리즘 사용하는 예시)
+오름차순으로 정렬된 자료에서 특정 범위에 속하는 숫자들의 개수를 구할때
+(예) {1,3,5,5,7,8,8,10,10,11,13} 에서 5 이상 11 이하의 숫자가 몇 개인지 구할 때
+int main() {
+
+	vector<int> arr = { 1,3,5,5,7,8,8,10,10,11,13 };
+	cout << "5 이상 11 이하의 갯수 : " << upper_bound(arr.begin(), arr.end(), 11) - lower_bound(arr.begin(), arr.end(), 5);
+
+	return 0;
+}
+
+
+
