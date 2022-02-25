@@ -1,0 +1,71 @@
+//처음에 계속 도전했던 방법은 문제 그대로 모든 부분수열들의 합을 배열에 넣어주고 그 배열끼리 서로 합이 S가 되는 개수를 확인하려 했지만 역시 시간초과가 발생했고
+// 두번째로 반을 나눠서 A,B로 배열에 각각 넣어주어서 A와 B의 합중에 S가 되는 개수를 확인하려 했지만 시간초과가 발생했다.
+//어떻게 하면 시간을 줄일 수 있을지 알아보던중에 lower_bound, upper_bound 라는 이분탐색 알고리즘을 알게되었고 
+//마지막 풀이방법에 이 알고리즘을 사용하니 통과할 수 있었다.
+// 풀었을 때 고민을 많이 했던 부분은 S가 0일때 하나를 제거해줘야한다는 것과 시간초과를 해결하는것 그리고 마지막으로 개수를 구하는 result 값이 int로 설정되어있으면
+// int 값을 초래 할 수 도 있어서 long long 을 사용했다는 점이다. 2^40 이라는 생각을 하지못했었다.
+
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+
+#define endl "\n"
+#define MAX 1000000
+using namespace std;
+
+int N, S;
+vector<int> lef;
+vector<int> rig;
+
+void Input() {
+	cin >> N >> S;
+	for (int i = 0; i < N; i++) {
+		int a; cin >> a;
+		if (i < N / 2) { lef.push_back(a); }
+		else { rig.push_back(a); }
+	}
+}
+vector<int> A;		//왼쪽 합
+vector<int> B;		//오른쪽 합
+void DFS(int range, int sum, vector<int>& vec, vector<int>& vv) {
+	for (int i = range; i < vec.size(); i++) {
+		vv.push_back(sum + vec[i]);
+		DFS(i + 1, sum + vec[i], vec, vv);
+	}
+}
+
+void Solution() {
+	A.push_back(0); B.push_back(0);
+	DFS(0, 0, lef, A);
+	DFS(0, 0, rig, B);
+
+	sort(A.begin(), A.end());
+	sort(B.begin(), B.end());
+
+	long long result = 0;
+
+	for (int i = 0; i < A.size(); i++) {
+		int s = lower_bound(B.begin(), B.end(), S - A[i]) - B.begin();
+		int e = upper_bound(B.begin(), B.end(), S - A[i]) - B.begin();
+		result += e-s;
+	}
+	if (S == 0) { result--; }
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
