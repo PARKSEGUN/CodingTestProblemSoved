@@ -1,0 +1,89 @@
+문제를 읽고 어떤식으로 구현해야될지 감이 오질 않아서 시간을 많이썻다.
+그래도 그림을 직접그려보고 생각해보니 최대로 넣을 수 있는 색의 개수는 3이 최대였다.
+그래서 어떻게하면 3이나오고 2가 나오고 1이 나오는지 조건을 걸어줬다.
+여기까지는 너무나도 뿌듯하게 잘 해결했지만 제출했더니 틀렸다고 나왔고 거기서 조금더 생각하지 못하고 이건 틀리 수 없다고 질문을 찾아봤다.
+반례가 있었다.
+4
+-XXX
+X--X
+X-X-
+XX--
+급하지 않고 조금만 더 반례에 대해서 생각해봤으면 풀 수 있지 않았을까하는 생각이든다.
+문제에 대한 코드를 작성하고 그에 대한 반례는 없을까 확인하는 습관을 기르자.
+
+
+처음에 작성한 코드-----------------------------------------------------------------
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<string>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+char map[55][55];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < N; j++) {
+			map[i][j] = str[j];
+		}
+	}
+}
+
+void Print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << map[i][j];
+		}cout << endl;
+	}
+}
+int dix[7] = { -1,-1,0,1,1,0,-1 };
+int diy[7] = { 0,1,1,0,-1,-1,0 };
+int result = 0;
+void Find(int x, int y) {
+	bool chk = 0;
+	for (int i = 0; i < 6; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		int ddx = x + dix[i + 1];
+		int ddy = y + diy[i + 1];
+		if ((dx > 0 && dx < N && dy>0 && dy < N) && (ddx > 0 && ddx < N && ddy>0 && ddy < N)) {
+			if (map[dx][dy] == 'X' && map[ddx][ddy] == 'X') {		//삼각형 모형을 만드는 조건
+				cout << 3; exit(0);
+			}
+		}
+		if ((dx > 0 && dx < N && dy>0 && dy < N)) {
+			if (map[dx][dy] == 'X') { result = 2; }
+		}
+	}
+}
+
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (map[i][j] == 'X') {
+				result = 1;
+				Find(i, j);
+			}
+		}
+	}
+	cout << result;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+}
+
+반례를 찾은 후에 코드-----------------------------------------------------------
