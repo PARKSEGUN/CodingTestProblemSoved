@@ -86,4 +86,91 @@ int main(void) {
 	Solve();
 }
 
+
+너무 답답한 나머지 좀 더 생각하지 못하고 질문을 올렸던 것 같습니다.
+문제점이 많았습니다.
+result 값에 계속 고정된 값을 넣어주었습니다. 그래서 그전까지의 과정에서 2를 찾아내도 1로 끝나면 1이 찍혔습니다.
+그리고 DFS를 사용하지 않고 그냥 맵에서 X 를 찾아서 풀어내려가다보니 이어지는 곳을 따라 계속 가지못하고 따로따로
+다른 곳에서 서로 같은 값에 색을 칠하려고 중복이 되서 result 의 최솟값을 찾아내지 못했습니다.
 반례를 찾은 후에 코드-----------------------------------------------------------
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<string>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+char map[55][55];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < N; j++) {
+			map[i][j] = str[j];
+		}
+	}
+}
+int color[55][55];
+void Print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << color[i][j];
+		}cout << endl;
+	}
+}
+int dix[7] = { -1,-1,0,1, 1, 0, -1 };
+int diy[7] = { 0,  1,1,0,-1,-1,0 };
+int result = 0;
+
+
+void Find(int x, int y,int c) {
+	color[x][y] = c;
+	for (int i = 0; i < 6; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if ((dx >= 0 && dx < N && dy>=0 && dy < N)) {
+			if (map[dx][dy] == 'X') {
+				result = max(result,2); 
+				if (color[dx][dy] == 0) {
+					if (color[x][y] == 1) { Find(dx, dy, 2); }
+					else if (color[x][y] == 2) { Find(dx, dy, 1); }
+				}
+				else if(color[dx][dy]==color[x][y]){
+					result = 3; cout << 3; exit(0);
+				}
+			}
+		}
+	}
+}
+
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (map[i][j] == 'X') {
+				result = max(result,1);
+				if (color[i][j] == 0) {
+					Find(i, j, 1);
+				}
+			}
+		}
+	}
+	cout << result;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+}
+
+
+
