@@ -1,0 +1,97 @@
+BFS는 하나의 경우를 쭉 파고드는 것이아닌 여러개의 경우의 수를 한단계씩 나아간다고 생각해봤을때 가장 빨리 그 목표점에 도달하게된다면 그게 최솟값이된다.
+함으로 visited 변수를 지정해줘서 전에 탐색했던 구간은 다른 경우가 다시 반복하지 못하게 중복을 막아줘야한다.
+왜냐하면 이미 다른 경우의 수가 방문 했던 지점을 또 다른 경우의 수가 방문한다면 이미 방문하고 지나갔던 경우의 수보다 최적화된 값일 수가 없다.
+BFS 에서 왜 visited 변수를 사용해주는지 다시한번 알게되었다.
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+int map[10][10];
+int ladder[15][2];
+bool ladder_chk[111];
+int snake[15][2];
+bool snake_chk[111];
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		cin >> ladder[i][0] >> ladder[i][1];
+		ladder_chk[ladder[i][0]] = true;
+	}
+	for (int i = 0; i < M; i++) {
+		cin >> snake[i][0] >> snake[i][1];
+		snake_chk[snake[i][0]] = true;
+	}
+}
+
+bool visited[111];		//result 값의 최소값은 20보다 작기 때문에 20으로 설정
+int result = 100;
+
+queue<int> q[2];
+
+
+void BFS() {
+	q[0].push(1); q[1].push(0);
+	while (q[0].size() != 0) {
+		int x = q[0].front();
+		int cnt = q[1].front();
+		int MAX = 1;
+		q[0].pop(); q[1].pop();
+		for (int i = 1; i <= 6; i++) {
+			if (visited[x + i] == false && ladder_chk[x + i] == true && x + i < 100) {
+				visited[x + i] = true;
+				for (int j = 0; j < N; j++) {
+					if (ladder[j][0] == x + i) {
+						q[0].push(ladder[j][1]);
+						q[1].push(cnt + 1);
+					}
+				}
+			}
+			else if (visited[x + i] == false && snake_chk[x + i] == true && x + i < 100) {
+				visited[x + i] = true;
+				for (int j = 0; j < M; j++) {
+					if (snake[j][0] == x + i) {
+						q[0].push(snake[j][1]);
+						q[1].push(cnt + 1);
+					}
+				}
+			}
+			else if (visited[x+i]==false&&snake_chk[x + i] == false && ladder_chk[x + i] == false && x + i < 100) {
+				visited[x + i] = true;
+				q[0].push(x + i); q[1].push(cnt + 1);
+			}
+			if (x + i == 100) {
+				result = min(result, cnt + 1);
+			}
+		}
+
+	}
+}
+
+void Solution() {
+	BFS();
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
