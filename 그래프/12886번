@@ -1,0 +1,70 @@
+1. A,B,C 그룹을 입력받고 정렬을 시켜준다음에 다시 작은순부터 A,B,C에 넣어준다 .
+2. 정렬된 A,B,C 값을 A<C , A<C, B<C 의 3가지 경우로 나누어서 BFS를 탐색한다.
+3. 주의해야할점은 처음에 visited 변수를 3차원으로 [1000][1000][1000] 를 사용했는데 역시나 메모리 초과가 발생해서 생각한 끝에 2차원으로 해도 이상이 없다는 걸 알았다.
+
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+bool visited_ab[1001][1001];
+bool visited_ac[1001][1001];
+bool visited_bc[1001][1001];
+int A, B, C;
+
+void Input() {
+	cin >> A >> B >> C;
+}
+queue<int> q[3];
+void BFS() {
+	q[0].push(A); q[1].push(B); q[2].push(C);
+	visited_ab[A][B] = true; visited_ac[A][C] = true; visited_bc[B][C] = true;
+	while (q[0].empty() != true) {
+		vector<int> vec;
+		int a = q[0].front();		int b = q[1].front();	int c = q[2].front();
+		q[0].pop(); q[1].pop(); q[2].pop();
+		//cout << a << " " << b << " " << c << endl;
+		if (a == b && b == c) { cout << 1; exit(0); }
+		vec.push_back(a); vec.push_back(b); vec.push_back(c);
+		sort(vec.begin(), vec.end());
+		a = vec[0]; b = vec[1]; c = vec[2];
+		if (a < b && !visited_ab[a + a][b - a]) {
+			visited_ab[a + a][b - a] = true;
+			q[0].push(a + a); q[1].push(b - a); q[2].push(c);
+		}
+		if (a < c && !visited_ac[a + a][c - a]) {
+			visited_ac[a + a][c - a] = true;
+			q[0].push(a + a); q[1].push(b); q[2].push(c - a);
+		}
+		if (b < c && !visited_bc[b + b][c - b]) {
+			visited_bc[b + b][c - b] = true;
+			q[0].push(a); q[1].push(b + b); q[2].push(c - b);
+		}
+	}
+	cout << 0;
+}
+
+void Solution() {
+	BFS();
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
