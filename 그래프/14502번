@@ -1,0 +1,127 @@
+1. 벽을 세울수 있는 모든 경우를 브루트포스로 돌린다.
+2. 벽을 세운후에 바이러스를 퍼트린다.
+3. 남은 빈공간의 수를 확인해서 최솟값을 출력한다.
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+int map[10][10];
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int arr[3][2];
+void Print() {
+	cout << endl;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << map[i][j]<<" ";
+		}cout << endl;
+	}cout << endl;
+}
+bool visited[10][10];
+int dix[4] = { 0,0,-1,1 };
+int diy[4] = { 1,-1,0,0 };
+
+int mm[10][10];
+void Virus_move(int x, int y) {
+	visited[x][y] = true;
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (visited[dx][dy] == false && dx >= 0 && dx < N && dy >= 0 && dy < M&&mm[dx][dy]==0) {
+			visited[dx][dy] = true;
+			mm[dx][dy] = 2;
+			Virus_move(dx, dy);
+		}
+	}
+}
+
+int result;
+void Virus() {
+	for (int i = 0; i < N; i++) {		//초기화
+		for (int j = 0; j < M; j++) {
+			mm[i][j] = map[i][j];
+		}
+	}
+	for (int i = 0; i < N; i++) {	
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 2) {
+				Virus_move(i, j);
+			}
+
+		}
+	}
+	int cnt = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (mm[i][j] == 0) { cnt++; }
+		}
+	}
+	result = max(cnt, result);
+	cnt = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = 0;
+		}
+	}
+}
+
+void Setting(int cnt, int ran_x, int ran_y) {
+	if (cnt == 3) {
+		for (int i = 0; i < 3; i++) {
+			map[arr[i][0]][arr[i][1]] = 1;
+		}
+		Virus();
+		for (int i = 0; i < 3; i++) {
+			map[arr[i][0]][arr[i][1]] = 0;
+		}
+
+	}
+	else {
+		for (int i = ran_x; i < N; i++) {
+			for (int j = ran_y; j < M; j++) {
+				if (map[i][j] == 0) {
+					arr[cnt][0] = i;
+					arr[cnt][1] = j;
+					Setting(cnt + 1, i, j + 1);
+				}
+			}
+			ran_y = 0;
+		}
+	}
+}
+
+
+void Solution() {
+	Setting(0, 0, 0);
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
