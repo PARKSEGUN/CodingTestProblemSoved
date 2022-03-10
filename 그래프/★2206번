@@ -1,0 +1,192 @@
+모든 벽을 확인하고 하나씩 지우고 최솟값 찾고 다시 벽을 세우고 다른 벽을 또 탐색하고 다시 지우고 최솟값을 찾는 방식으로 코드를 작성하였는데 범위가 N,M<=1000 이다 보니
+시간 초과가 당연하게 발생했다.
+어떻게 하면 시간초과를 수정할 수 있을지 생각했고, queue 에다가 벽을 부수고 지나온 것인지 아니면 벽을 부수지 않고 지나온 것인지 판별하는 방을 하나더 추가해서
+벽을 지나왔다면 1을 벽을 지나지 않았다면 0을 넣어주었다
+시간초과는 해결되었지만 벽을 부수고 지나온 것은 어느 한지점에 벽을 부시지 않은 것보다 빨리 도착했기때문에 벽을 부시지 않고 지나온애가 visited변수가 겹쳐서 이동하지 못하는 반례가
+생겨났고 해서 벽을 부시고 지나는 순간부터 hit_visited 라는 새로운 변수를 추가해줘서 벽을 부신 것과 부시지 않은 것이 중복되지 않게 해주었다.
+
+시간 초과 발생 코드----------------------------------
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+bool map[1111][1111];
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = 0; }
+			else map[i][j] = 1;
+		}
+	}
+}
+
+queue<int> q[3];
+int dix[4] = { -1,1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+int result=1000000;
+bool visited[1111][1111];
+void BFS() {
+	q[0].push(0); q[1].push(0); q[2].push(0);
+	visited[0][0] = true;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		int cnt = q[2].front();
+		//cout << x << " " << y << " " << cnt << endl;
+		q[0].pop(); q[1].pop(); q[2].pop();
+
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx == N - 1 && dy == M - 1) { result = min(result, cnt + 2); break; }
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (map[dx][dy] == 0 && visited[dx][dy] == false) { q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); visited[dx][dy] = true; }
+			}
+		}
+	}
+}
+
+void Reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = 0;
+		}
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 1) {
+				map[i][j] = 0;
+				BFS();
+				Reset();
+				map[i][j] = 1;
+			}
+			else { BFS(); Reset(); }
+		}
+	}
+	if (result == 1000000) { cout << -1; exit(0); }
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
+
+
+시간초과 수정 코드---------------------------------
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+bool map[1111][1111];
+
+void Input() {
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = 0; }
+			else map[i][j] = 1;
+		}
+	}
+	if (N == 1 && M == 1) { cout << 1; exit(0); }
+}
+
+queue<int> q[4];		//4번째 큐에는 벽을 뚫었는지 확인하는 값을 넣어준다. 1을 부셨다고 가정한다.
+int dix[4] = { -1,1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+int result=1000000;
+bool visited[1111][1111];
+bool hit_visited[1111][1111];
+void BFS() {
+	q[0].push(0); q[1].push(0); q[2].push(0); q[3].push(0);
+	visited[0][0] = true;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		int cnt = q[2].front();
+		int hit = q[3].front();	//벽을 깼는지 확인한다
+		//cout << x << " " << y << " " << cnt <<" "<<hit << endl;
+		q[0].pop(); q[1].pop(); q[2].pop(); q[3].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx == N - 1 && dy == M - 1) { result = min(result, cnt + 2); break; }
+
+			if (hit == 0) {
+				if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+					if (map[dx][dy] == 0 && visited[dx][dy] == false) {
+						q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); q[3].push(hit);
+							visited[dx][dy] = true;
+						
+					}
+					else if (hit == 0 && map[dx][dy] == 1 && visited[dx][dy] == false) { q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); q[3].push(1); hit_visited[dx][dy] = true; }
+				}
+			}
+			else if (hit == 1) {
+				if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+					if (map[dx][dy] == 0 && hit_visited[dx][dy] == false) {
+						q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); q[3].push(hit);
+						hit_visited[dx][dy] = true;
+
+					}
+				}
+			}
+
+		}
+	}
+}
+
+void Solution() {
+	BFS();
+	if (result == 1000000) { cout << -1; exit(0); }
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
