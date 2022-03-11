@@ -1,0 +1,83 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int N, M,K;
+bool map[1111][1111];
+
+void Input() {
+	cin >> N >> M>>K;
+
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = 0; }
+			else map[i][j] = 1;
+		}
+	}
+	if (N == 1 && M == 1) { cout << 1; exit(0); }
+}
+
+queue<int> q[5];		//4번째 큐에는 벽을 몇개를 부시고 지나왔는지 확인, 5번째 큐에는 낮밤을 나타내는 값을 저장(1이 낮을 가르킨다)
+int dix[4] = { -1,1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+int result = 1000000;
+
+bool hit_visited[11][1111][1111];
+
+void BFS() {
+	q[0].push(0); q[1].push(0); q[2].push(0); q[3].push(0); q[4].push(1);//낮
+	hit_visited[0][0][0] = true;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		int cnt = q[2].front();
+		int hit = q[3].front();	//벽을 몇개 부셨는지 확인
+		int sky = q[4].front();
+		//cout << x << " " << y << " " << cnt <<" "<<hit <<" " << sky << endl;
+		q[0].pop(); q[1].pop(); q[2].pop(); q[3].pop(); q[4].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx == N - 1 && dy == M - 1) { result = min(result, cnt + 2); break; }
+
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (map[dx][dy] == 0 && hit_visited[hit][dx][dy] == false) {
+					q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); q[3].push(hit); q[4].push(sky * -1);
+					hit_visited[hit][dx][dy] = true;
+				}
+				else if (hit < K && map[dx][dy] == 1 && hit_visited[hit][dx][dy] == false) {
+					if (sky == 1) { q[0].push(dx); q[1].push(dy); q[2].push(cnt + 1); q[3].push(hit + 1); q[4].push(sky * -1); hit_visited[hit][dx][dy] = true; }
+					else if(sky==-1){ q[0].push(x); q[1].push(y); q[2].push(cnt + 1); q[3].push(hit); q[4].push(sky * -1); }
+				}
+			}
+		}
+	}
+}
+
+void Solution() {
+	BFS();
+	if (result == 1000000) { cout << -1; exit(0); }
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
