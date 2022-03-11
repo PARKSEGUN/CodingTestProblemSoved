@@ -1,0 +1,236 @@
+처음에 visited 변수를 사용해서 해결했지만 시간 초과가 발생했다.  Reset() 이라는 visited 변수를 초기화 해주는 함수 때문인지 알고
+그래서 visited 변수를 제거 하고 첫번쨰부터 시작해서 처음에 방문하는 칸들은 2를 넣어주고 그다음 1이 방문하는 곳에는 3을 넣어주는 식으로 시간초과를 해결하려고
+했으니 여전히 시간초과가 발생했다.
+시간초과를 해결하기 위해 충분히 생각해봤고 알아내지 못해서 질문을 찾아봤다.
+이 문제를 시간초과를 해결하기위해 방법을 생각해낸 것이 목적인 문제였다내
+내가 작성 했던 코드 방식과는 다르게 0 인 곳을 찾아서 그와 연결된 0들이 몇개인지를 찾아내고 구역이름을 설정해준다.
+첫번째의 0과 연결된 0의 집단들은 1이라고 이름을 지어주고 총 0의 개수도 저장해준다. 그 다음 구역의 0의 모임들은 2 순으로 이름을 정해주고 그 그룹의 0의 개수를 저장해준다.
+후에 다시 이번에는 map의 벽을 찾게되고 벽의 위,아래,오른쪽, 왼쪽 4가지 방향에 0이 있는지 확인하고 그 0 들은 서로 같은 구역이라서 중복이 되진 않는지 확인해주고 중복이 되지 않는다면
+그 4가지 방향의 값들의 합을 그 벽에 저장해준다
+처음 내가 작성했던 코드의 문제점은 시간복잡도가 O(n*nm*m)으로 너무 많은 시간이 걸린
+위에 문제를 해결했던 방법의 핵심은 처음에 맵 처음부터 끝까지 한칸 씩 확인하게 때문에 O(n) 이 발생하고 다시 맵 처음부터 벽을 찾아내는 방식으로 또 O(n) 이 발생한다는 것이다.
+시간 복잡도에서 많은 차이를 나타내어주고있다.
+어떻게 코드를  시간 복잡도를 줄일 수 있는 것인지 알게되었다.
+시간초과 발생 코드----------------------------------------------------
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+int map[1111][1111];
+
+void Input() {
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = 0; }
+			else map[i][j] = 1;
+		}
+	}
+}
+
+queue<int> q[2];
+int dix[4] = { -1,1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+//bool visited[1111][1111];
+
+void Reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			//visited[i][j] = false;
+		}
+	}
+}
+int cnt=2;
+void BFS(int xx,int yy) {
+	int result = 1;
+	q[0].push(xx); q[1].push(yy);
+	//visited[0][0] = true;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		//cout << x << " " << y  << endl;
+		q[0].pop(); q[1].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (map[dx][dy] != 1&&map[dx][dy]!=cnt) {
+					q[0].push(dx); q[1].push(dy);
+					map[dx][dy] = cnt;
+					result++;
+					//visited[dx][dy] = true;
+				}
+			}
+		}
+	}
+	cnt++;
+	cout << result%10;
+}
+
+void Solution() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 1) {
+				BFS(i,j);
+				//Reset();
+			}
+			else { cout << 0; }
+		}
+		cout << endl;
+	}
+
+
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
+
+
+수정 코드 ---------------------------------------------------------------
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+int map[1111][1111];
+
+void Input() {
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < M; j++) {
+			if (str[j] == '0') { map[i][j] = 0; }
+			else map[i][j] = -1;
+		}
+	}
+}
+
+queue<int> q[2];
+int dix[4] = { -1,1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+bool visited[1111][1111];
+int range[1111][1111];		//'0'이 같은 구역인지 판별하기 위함
+int sector = 1;
+void BFS(int xx, int yy) {
+	int result = 1;
+	q[0].push(xx); q[1].push(yy);
+	visited[xx][yy] = true;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		q[0].pop(); q[1].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (map[dx][dy] == 0 && visited[dx][dy] == false) {
+
+					q[0].push(dx); q[1].push(dy);
+					result++;
+					visited[dx][dy] = true;
+				}
+			}
+		}
+	}
+	q[0].push(xx); q[1].push(yy);
+	map[xx][yy] = result;
+	range[xx][yy] = sector;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		q[0].pop(); q[1].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (map[dx][dy] == 0) {
+					map[dx][dy] = result;
+					range[dx][dy] = sector;
+					q[0].push(dx); q[1].push(dy);
+				}
+			}
+		}
+	}
+	sector++;
+}
+
+void Solution() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 0) {
+				BFS(i, j);
+			}
+		}
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == -1) {
+				int sum = 1;
+				int tmp[4] = { 0, };
+				for (int k = 0; k < 4; k++) {
+					int x = i + dix[k];
+					int y = j + diy[k];
+					if (x >= 0 && x < N && y >= 0 && y < M) {
+						if (map[x][y] != -1) {
+							tmp[k] = range[x][y];
+							bool chk = false;
+							for (int kk = 0; kk < k; kk++) {
+								if (tmp[kk] == tmp[k]) { chk = true; }
+							}
+							if (chk == false) {
+								sum += map[x][y];
+							}
+						}
+					}
+				}
+				cout << sum % 10;
+			}
+			else cout << 0;
+		}cout << endl;
+	}
+
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
