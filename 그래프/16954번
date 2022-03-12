@@ -1,0 +1,91 @@
+무엇인가 완벽하게 해결하지 못하고 꾸역꾸역 통과를 했던 문제였다.
+문제를 제대로 이해하고 무작정 판단하지말고 반례는 없을지 생각하고 풀어내자.
+
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<string>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+bool map[10][10];
+
+
+void Input() {
+	for (int i = 0; i < 8; i++) {
+		string str;
+		cin >> str;
+		for (int j = 0; j < 8; j++) {
+			if (str[j] == '.') { map[i][j] = 0; }
+			else map[i][j] = 1;
+
+		}
+	}
+}
+
+void Print() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			cout << map[i][j];
+		}cout << endl;
+	}
+}
+void Map_move() {
+	for (int i = 6; i >= 0; i--) {
+		for (int j = 0; j < 8; j++) {
+			map[i + 1][j] = map[i][j];
+		}
+	}
+	for (int i = 0; i < 8; i++) { map[0][i] = 0; }
+}
+
+queue<int> q[4];
+int dix[] = { 0, 0,-1,-1,-1,0,1,1,1 };
+int diy[] = { 0, -1, -1, 0, 1, 1,1,0,-1 };
+void BFS() {
+	q[0].push(7); q[1].push(0); q[2].push(0);
+	int SEC = 0;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		int sec = q[2].front();
+		q[0].pop(); q[1].pop(); q[2].pop(); 
+		if (SEC < sec) { Map_move(); SEC++; }
+		if (map[x][y] == 1) { continue; }
+		else if (x == 0 && y == 7) { cout << 1; exit(0); }
+		else {
+			for (int i = 0; i < 9; i++) {
+				int dx = x + dix[i];
+				int dy = y + diy[i];
+				if (dx >= 0 && dx < 8 && dy >= 0 && dy < 8) {
+					if (map[dx][dy] == 0) {
+							q[0].push(dx); q[1].push(dy); q[2].push(sec + 1);
+					}
+				}
+			}
+		}
+	}
+	//맵을 한칸 낮춘다.
+
+}
+
+void Solve() {
+	BFS();
+	cout << 0;
+	//cout << endl;	Print();
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+}
+
+
