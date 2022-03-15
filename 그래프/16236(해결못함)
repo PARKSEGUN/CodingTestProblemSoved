@@ -36,7 +36,7 @@ int result;
 void Print() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			cout << map[i][j]<<" ";
+			cout << map[i][j] << " ";
 		}cout << endl;
 	}
 }
@@ -47,7 +47,7 @@ void Solution() {
 	int XX = 50;
 	int cnt = MAX;
 	q[0].push(X); q[1].push(Y); q[2].push(0); q[3].push(2); q[4].push(0);
-	map[X][Y]=0;
+	map[X][Y] = 0;
 	while (q[0].empty() != true) {
 		int x = q[0].front();
 		int y = q[1].front();
@@ -61,19 +61,11 @@ void Solution() {
 			int dy = y + idy[i];
 			if (dx >= 0 && dx < N && dy >= 0 && dy < N) {
 				if (visited[dx][dy] == false) {
-					if (map[dx][dy] == 0||map[dx][dy]==siz) {
+					if (map[dx][dy] == 0 || map[dx][dy] == siz) {
 						q[0].push(dx); q[1].push(dy); q[2].push(sec + 1); q[3].push(siz); q[4].push(eat);
 						visited[dx][dy] = true;
 					}
 					else if (map[dx][dy] < siz) {		//먹는 부분
-						cnt = min(cnt, sec);
-						if (cnt == sec) {
-							XX = min(dx, XX);
-							YY = min(dy, YY);
-						}
-
-						BFS로 짜면 너무 많은 반례가 발생한다. 상어가 갈수있는 모든 경우의수를 판단하고 그중에 제일 가깝고 위쪽이면서 왼쪽에있는 물고기를 찾아야한다
-			
 
 
 						if (eat + 1 == siz) { siz++; eat = 0; }
@@ -83,14 +75,15 @@ void Solution() {
 						Clear();		//visited 변수 초기화
 						q[0].push(dx); q[1].push(dy); q[2].push(sec + 1); q[3].push(siz); q[4].push(eat);
 						map[dx][dy] = 0;
-
+						여기에 FIND(int dx, dy) 함수 만들어서 큐에 넣어준dx,dy 에서 먹어야하는 물고기를 찾아주는 함수를
+							만들고 그 물고기의 좌표를 반환시켜주고 그 좌표값이 나왔을때 위에 문장을 실행시키게 한다.
 
 						system("cls");
 						cout << "x : " << dx << "  " << "y : " << dy << endl;
-						cout << "초 : " << sec<<endl;
+						cout << "초 : " << sec << endl;
 						cout << "크기 : " << siz << endl;
-						cout << "먹은 양 : " << eat << endl<<endl;
-						
+						cout << "먹은 양 : " << eat << endl << endl;
+
 						Print();
 						//cout <<endl<< x << " " << y << " " << sec << " " << siz << " " << eat << endl;
 						result = sec + 1;
