@@ -1,0 +1,119 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+#define MAX 1000000
+using namespace std;
+
+int N;
+int map[22][22];
+int X, Y;		//상어 초기 좌표
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 9) { X = i; Y = j; }
+		}
+	}
+}
+int idx[] = { -1,0,0,1 };
+int idy[] = { 0,-1,1,0 };
+bool SEC[MAX]; //해당하는 초(시간) 에 행동을 끝냈는지 확인하기위해
+queue<int> q[5];		//[x][y][초][크기][물고기 먹은양]
+bool visited[22][22];
+void Clear() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			visited[i][j] = false;
+		}
+	}
+}
+int result;
+void Print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << map[i][j]<<" ";
+		}cout << endl;
+	}
+}
+
+
+void Solution() {
+	int YY = 50;
+	int XX = 50;
+	int cnt = MAX;
+	q[0].push(X); q[1].push(Y); q[2].push(0); q[3].push(2); q[4].push(0);
+	map[X][Y]=0;
+	while (q[0].empty() != true) {
+		int x = q[0].front();
+		int y = q[1].front();
+		int sec = q[2].front();
+		int siz = q[3].front();
+		int eat = q[4].front();
+
+		q[0].pop(); q[1].pop(); q[2].pop(); q[3].pop(); q[4].pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + idx[i];
+			int dy = y + idy[i];
+			if (dx >= 0 && dx < N && dy >= 0 && dy < N) {
+				if (visited[dx][dy] == false) {
+					if (map[dx][dy] == 0||map[dx][dy]==siz) {
+						q[0].push(dx); q[1].push(dy); q[2].push(sec + 1); q[3].push(siz); q[4].push(eat);
+						visited[dx][dy] = true;
+					}
+					else if (map[dx][dy] < siz) {		//먹는 부분
+						cnt = min(cnt, sec);
+						if (cnt == sec) {
+							XX = min(dx, XX);
+							YY = min(dy, YY);
+						}
+
+						BFS로 짜면 너무 많은 반례가 발생한다. 상어가 갈수있는 모든 경우의수를 판단하고 그중에 제일 가깝고 위쪽이면서 왼쪽에있는 물고기를 찾아야한다
+			
+
+
+						if (eat + 1 == siz) { siz++; eat = 0; }
+						else eat++;
+						while (q[0].empty() != true) { q[0].pop(); q[1].pop(); q[2].pop(); q[3].pop(); q[4].pop(); }
+						i = 4;	//for문 끝내주기
+						Clear();		//visited 변수 초기화
+						q[0].push(dx); q[1].push(dy); q[2].push(sec + 1); q[3].push(siz); q[4].push(eat);
+						map[dx][dy] = 0;
+
+
+						system("cls");
+						cout << "x : " << dx << "  " << "y : " << dy << endl;
+						cout << "초 : " << sec<<endl;
+						cout << "크기 : " << siz << endl;
+						cout << "먹은 양 : " << eat << endl<<endl;
+						
+						Print();
+						//cout <<endl<< x << " " << y << " " << sec << " " << siz << " " << eat << endl;
+						result = sec + 1;
+						system("pause");
+					}
+				}
+			}
+		}
+	}
+	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
