@@ -1,0 +1,69 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+#include<climits>
+
+#define endl "\n"
+
+using namespace std;
+string in, out;
+int T;
+void Input() {
+	cin >> in>>out;
+}
+
+int sosu[11111];
+void Sosu() {		//소수 찾는 함수
+	for (int i = 0; i < 10000;i++) { sosu[i] = false; }
+	sosu[0] = true; sosu[1] = true;
+	for (int i = 2; i * i < 10000; i++) {
+		for (int j = i * i; j < 10000; j += i) {
+			sosu[j] = true;
+		}
+	}
+}
+
+void Solution() {
+	Sosu();
+	int result = INT_MAX;
+	queue<string> q;	//[값]
+	queue<int>qq;		//[변환한 횟수]
+	q.push(in); qq.push(0);
+	while (q.empty() != true) {
+		string str = q.front();
+		int cnt = qq.front();
+		q.pop(); qq.pop();
+		if (str == out) { result = min(result, cnt); }
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 10; j++) {
+				char tmp = str[i];
+				str[i] = (char)(48 + j);
+				if (stoi(str) >= 1000) {
+					if (sosu[stoi(str)] == false) {
+						q.push(str); qq.push(cnt + 1);
+						sosu[stoi(str)] = true;
+					}
+				}
+				str[i] = tmp;
+			}
+		}
+	}
+	if (result == INT_MAX) { cout << "Impossible"; }
+	else cout << result;
+	cout << endl;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solution();
+	}
+	return 0;
+}
