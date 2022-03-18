@@ -1,3 +1,9 @@
+처음에 풀었던 방법은 BFS상하좌우에서 문제의 조건이 물고기와 아기상어의 거리가 같다면 위쪽에 위치하고, 위쪽에 있는 물고기들 거리값이 또 같다면 왼쪽에 있는 값들을
+불러오게 작성했지만 BFS자체에서 상하좌우 순서에 우선순위를 두고 작성하게되면 문제 예제4번을 통과하지못했다.
+그래서 아기상어 위치에서 거리가 먹을 수 있는 물고기를 모두 조사한뒤에 거리가 작은 값부터 거리가 작은 값이 여러개라면 그 여러개중에 가장 위쪽에서 가장 왼쪽에 위치하는 
+즉 sort를 해주게된다면 자연스럽게 첫번째 오게되는 좌표값이 맞아 떨어지게된다.
+
+처음에 작성했던 코드----------------------------------------
 #include<iostream>
 #include<string>
 #include<vector>
@@ -94,6 +100,117 @@ void Solution() {
 		}
 	}
 	cout << result;
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
+
+다시 작성한 코드-----------------------------------------------
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+#define MAX 1000000
+using namespace std;
+
+int N;
+int map[22][22];
+int x, y;		//상어 초기 좌표
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 9) { x = i; y = j; }
+		}
+	}
+}
+int idx[] = { -1,0,0,1 };
+int idy[] = { 0,-1,1,0 };
+
+queue < pair<int, int>> q;		//[x][y][초][크기][물고기 먹은양]
+int  visited[22][22];
+void Clear() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			visited[i][j] = -1;
+		}
+	}
+}
+int result;
+int siz=2, eat;
+void Solution() {
+	while (1) {
+		vector<pair<int, int>> vec;
+		Clear();//visited 변수 초기화
+		map[x][y] = 0; visited[x][y] = 0;
+		if (eat >= siz) { siz++; eat = 0; }
+		q.push({ x,y });
+		while (q.empty() != true) {
+			x = q.front().first;
+			y = q.front().second;
+			q.pop(); 
+			for (int i = 0; i < 4; i++) {
+				int dx = x + idx[i];
+				int dy = y + idy[i];
+				if (dx >= 0 && dx < N && dy >= 0 && dy < N) {
+					if (visited[dx][dy] == -1) {
+						if (map[dx][dy] == 0 || map[dx][dy] == siz) {
+							visited[dx][dy] = visited[x][y] + 1;
+							q.push({ dx,dy });
+						}
+						else if (map[dx][dy] < siz && map[dx][dy]>0) {		//먹는 부분
+							q.push({ dx,dy });
+							vec.push_back({ dx,dy });
+							visited[dx][dy] = visited[x][y] + 1;
+						}
+					}
+				}
+			}
+		}
+		if (vec.size() == 0) { cout << result; exit(0); }
+		else if (vec.size() == 1) {
+			x = vec[0].first;
+			y = vec[0].second;
+			map[x][y] = 0;
+			result += visited[x][y];
+			eat++;
+		}
+		else if (vec.size() > 1) {
+			int ss = MAX;
+			vector<pair<int, int>> vv;
+			for (int i = 0; i < vec.size(); i++) {
+				ss = min(ss, visited[vec[i].first][vec[i].second]);
+			}
+
+			for (int i = 0; i < vec.size(); i++) {
+				if (visited[vec[i].first][vec[i].second] == ss) {
+					vv.push_back({ vec[i].first, vec[i].second });
+				}
+			}
+			sort(vv.begin(), vv.end());
+			x = vv[0].first;
+			y = vv[0].second;
+			map[x][y] = 0;
+			result += visited[x][y];
+			eat++;
+		}
+	}
 }
 
 void Solve() {
