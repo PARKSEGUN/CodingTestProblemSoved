@@ -1,0 +1,108 @@
+BFS를 사용해서 쉽게 해결할 수 있는 문제이다.
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+#include<climits>
+
+#define endl "\n"
+
+using namespace std;
+int N;
+char map[111][111];			//아닌사람 기준
+char mmap[111][111];		//적록색약 기준
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 'R') { mmap[i][j] = 'G'; }
+			else mmap[i][j] = map[i][j];
+		}
+	}
+}
+bool visited[111][111];
+void Reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			visited[i][j] = false;
+		}
+	}
+}
+void Print() {
+	cout << endl;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << mmap[i][j];
+		}cout << endl;
+	}
+}
+int dix[] = { 0,0,1,-1 };
+int diy[] = { 1,-1,0,0 };
+int result;
+bool chk;
+void BFS(int x,int y,char col) {
+	queue<pair<int, int>> q;
+	q.push({ x,y });
+	visited[x][y] = true;
+	while (q.size() != 0) {
+		int xx = q.front().first;
+		int yy = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = xx + dix[i];
+			int dy = yy + diy[i];
+			if (dx >= 0 && dx < N && dy >= 0 && dy < N) {
+				if (chk == 0) {
+					if (visited[dx][dy] == false && map[dx][dy] == col) {
+						visited[dx][dy] = true;
+						q.push({ dx,dy });
+					}
+				}
+				else {
+					if (visited[dx][dy] == false && mmap[dx][dy] == col) {
+						visited[dx][dy] = true;
+						q.push({ dx,dy });
+					}
+				}
+			}
+		}
+	}
+}
+
+void Solution() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (visited[i][j] == false) {
+				result++;
+				BFS(i, j,map[i][j]);
+			}
+		}
+	}
+	//Print();
+	cout << result<<" ";
+	Reset(); result = 0;	chk = true;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (visited[i][j] == false) {
+				result++;
+				BFS(i, j, mmap[i][j]);
+			}
+		}
+	}
+	cout << result;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Input();
+	Solution();
+
+	return 0;
+}
