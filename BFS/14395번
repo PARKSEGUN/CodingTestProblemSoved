@@ -1,0 +1,76 @@
+x를 int로 설정하는 것과 long long 으로 설정하는 것의 차이를 알지 못했다.
+x에는 10억이하의 수만 들어가는데 int형은 21억 정도의 값을 저장하는 것으로 알고있다.
+long long 으로 변환시켜줘야하는 이유에 대해서 다시 알아보자
+
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+#define MAX 1000000001
+using namespace std;
+
+int S, T;
+void Input() {
+	cin >> S >> T;
+	if (S == T) { cout << 0; exit(0); }
+}
+queue<vector<int>> q;
+bool zero_chk;
+bool one_chk;
+void Solution() {
+	vector<int> vvec;
+	vvec.push_back(S);
+	q.push(vvec);
+	while (q.size() != 0) {
+		vector<int> vec;
+		//벡터의 첫번째부분은 값을 넣어주고 그 뒤로는 어떠한 연산을 사용했는지 저장
+		//1,2,3,4 -> *,+,-,/
+		vec = q.front();
+		long long x = vec[0];
+		q.pop();
+			if (x == T) {
+				for (int i = 1; i < vec.size(); i++) {
+					if (vec[i] == 1) { cout << "*"; }
+					else if (vec[i] == 2) { cout << "+"; }
+					else if (vec[i] == 3) { cout << "-"; }
+					else if (vec[i] == 4) { cout << "/"; }
+				}
+				exit(0);
+			}
+
+			if (x > 1 && x*x < MAX) { vec[0] = x * x; vec.push_back(1); q.push(vec); vec.pop_back(); }
+			if (x != 0 && x+x <MAX) {		//+,- 부분
+				vec[0] = x + x; vec.push_back(2); q.push(vec); vec.pop_back();
+				if (zero_chk == false) {
+					vec[0] = x - x; vec.push_back(3); q.push(vec); vec.pop_back();
+					zero_chk = true;
+				}
+			}
+			if (x > 1 && x/x < MAX) {
+				if (one_chk == false) {
+					vec[0] = x / x; vec.push_back(4); q.push(vec); vec.pop_back();
+					one_chk = true;
+				}
+			}
+	}
+}
+
+void Solve() {
+	Input();
+	Solution();
+	cout << -1;
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+
+	return 0;
+}
