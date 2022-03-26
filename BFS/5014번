@@ -1,0 +1,55 @@
+BFS를 사용해서 쉽게 해결할 수 있었다!
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+#define endl "\n"
+
+using namespace std;
+
+int F, S, G, U, D;
+
+void Input() {
+	cin >> F >> S >> G >> U >> D;
+}
+bool visited[1111111];
+queue<pair<int,int>> q;
+int result;
+void Solution() {
+	int start = S;
+	int end = G;
+	q.push({ start,0 });
+	visited[start] = 1;
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int cnt = q.front().second;
+		q.pop();
+		if (x == G) { cout << cnt; exit(0); }
+		 {
+			if (x + U <= F&&visited[x+U]==false) {
+				q.push({ x + U,cnt + 1 });
+				visited[x + U] = true;
+			}
+			if (x - D >= 1&&visited[x-D]==false) {
+				q.push({ x - D,cnt + 1 });
+				visited[x - D] = true;
+			}
+		}
+	}
+	cout << "use the stairs";
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Input();
+	Solution();
+
+	return 0;
+}
