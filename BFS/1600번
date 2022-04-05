@@ -1,0 +1,93 @@
+#include<iostream>
+#include<queue>
+#define endl "\n"
+using namespace std;
+int N, M, K;
+bool map[222][222];
+
+void Input() {
+	cin >> K;
+	cin >> M >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+queue<pair<int, int>>q;
+queue<pair<int, int>> cntk;
+int visited[222][222];
+int dix[4] = { 0,0,-1,1 };
+int diy[4] = { 1,-1,0,0 };
+int hx[8] = { -2,-1,1,2,2,1,-1,-2 };
+int hy[8] = { 1,2,2,1,-1,-2,-2,-1 };
+void print() {
+	system("cls");
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << visited[i][j];
+		}cout << endl;
+	}
+	cout << endl;
+}
+void BFS() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = 55;
+		}
+	}
+	q.push({ 0,0 });
+	visited[0][0] = 0;
+	cntk.push({ 0,0 });
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int y = q.front().second;
+		int cnt = cntk.front().first;
+		int horse = cntk.front().second;
+		q.pop(); cntk.pop();
+		//	cout << x << " " << y << endl;
+			//print();
+		if (x == N - 1 && y == M - 1) { cout << cnt; exit(0); }
+
+		for (int i = 0; i < 4; i++) {		//그냥 걸어갈때
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (horse < visited[dx][dy] && map[dx][dy] == 0) {
+					visited[dx][dy] = horse;
+					q.push({ dx,dy });
+					cntk.push({ cnt + 1,horse });
+				}
+			}
+		}
+		if (horse < K) {		//말처럼 뛰었을때
+			for (int i = 0; i < 8; i++) {
+				int hhx = x + hx[i];
+				int hhy = y + hy[i];
+				if (hhx >= 0 && hhx < N && hhy >= 0 && hhy < M) {
+					if (horse + 1 < visited[hhx][hhy] && map[hhx][hhy] == 0) {
+						visited[hhx][hhy] = horse + 1;
+						q.push({ hhx,hhy });
+						cntk.push({ cnt + 1,horse + 1 });
+					}
+				}
+			}
+		}
+	}
+}
+void Solve() {
+	BFS();
+	cout << -1;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cout.tie(0);
+	cin.tie(0);
+	Input();
+	Solve();
+}
+
+
+
