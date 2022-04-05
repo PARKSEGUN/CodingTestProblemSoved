@@ -1,0 +1,81 @@
+BFS 간단하게 
+
+#include<iostream>
+#include<queue>
+#define endl "\n"
+using namespace std;
+
+int N, M;
+bool map[55][55];
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+
+bool visited[55][55];
+void reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = 0;
+		}
+	}
+}
+int dix[8] = { 1,1,0,-1,-1,-1,0,1 };
+int diy[8] = { 0,1,1,1,0,-1,-1,-1 };
+int result;
+
+void BFS(int x, int y) {
+	queue<pair<int, int>> q;
+	queue<int> mov;
+	q.push({ x,y });
+	mov.push(0);
+	visited[x][y] = 1;
+	while (q.size() != 0) {
+		int xx = q.front().first;
+		int yy = q.front().second;
+		int cnt = mov.front();
+		q.pop(); mov.pop();
+
+		for (int i = 0; i < 8; i++) {
+			int dx = xx + dix[i];
+			int dy = yy + diy[i];
+
+			if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+				if (visited[dx][dy] == 0) {
+					visited[dx][dy] = 1;
+					if (map[dx][dy] == 0) {
+						q.push({ dx,dy });
+						mov.push(cnt + 1);
+					}
+					else {
+						result = max(cnt + 1, result); return;
+					}
+				}
+			}
+		}
+	}
+}
+
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 0) {
+				BFS(i, j); reset();
+			}
+		}
+	}
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cout.tie(0);
+	cin.tie(0);
+
+	Input();
+	Solve();
+}
