@@ -1,0 +1,52 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+
+#define endl "\n"
+using namespace std;
+int N;
+int map[1111];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> map[i]; }
+}
+int dp[1111];
+void Solution() {
+	int i = 0;
+	dp[i] = 0;
+	int MAX = map[0];
+	int MAX_ = MAX;
+	while (i < N - 1) {
+		MAX = -1;
+		int cnt = 0;		//3, 3, 2, 1 이라고 있을때 누가 더 멀리 점프할 수 있는지 확인하기위해
+		int chk = 0;		//몇번째에서 최댓값을 찾았는지 저장하는 변수
+		for (int j = i + 1; j <= i + MAX_; j++) {
+			if (dp[j] == 0) { dp[j] = dp[i] + 1; }
+			else dp[j] = min(dp[i] + 1,dp[j]);
+			if (MAX < map[j] + cnt) { MAX = map[j]; chk = j; }
+			cnt++;
+		}
+		
+		i = chk;
+		MAX_ = MAX;
+		if (MAX == -1) { cout << -1; exit(0); }
+		//cout << i<<" "<<MAX_<<" "<<endl;
+	}
+	cout << dp[N - 1];
+}
+
+void Solve() {
+	Input();
+	Solution();
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solve();
+}
