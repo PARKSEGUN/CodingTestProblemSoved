@@ -1,0 +1,56 @@
+ 처음 풀어보는 배낭문제였다.
+ 배낭문제는 어떻게 해결하는지, 어떤 구조로 다이나믹프로그래밍을 사용해서 해결하는지 암기하자, 이해하기전에 암기하자
+ 
+ 
+ #include<iostream>
+#include<algorithm>
+#include<vector>
+
+
+using namespace std;
+
+int N, M;
+vector<pair<int, int>> vec;
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		int a, b;
+		cin >> a >> b;
+		vec.push_back({ a,b });
+	}
+}
+
+int dp[111][111111];
+int result;
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 1; j <= M; j++) {
+			if (j >= vec[i].first) {
+				dp[i][j] = vec[i].second;
+				if (i > 0) {
+					dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - vec[i].first] + vec[i].second);
+				}
+			}
+			else {
+				if (i > 0) { dp[i][j] = dp[i - 1][j]; }
+			};
+			result = max(result, dp[i][j]);
+		}
+	}
+
+	/*for (int i = 0; i < N; i++) {
+		for (int j = 1; j <= M; j++) {
+			cout << dp[i][j] << " ";
+		}cout << endl;
+	}*/
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
