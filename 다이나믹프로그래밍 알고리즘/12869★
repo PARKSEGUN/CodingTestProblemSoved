@@ -1,0 +1,54 @@
+막상 해답을 놓고 보면 간단한데 왜 이런 생각을 못했는지 반성하고 이해하자
+dp[][][] 인덱스값에는 0보다 작은수는 못들어가기때문에 체력이 0밑으로 떨어진다면 0으로초기화
+scv 세개 다 죽는다면 최솟값 유지하면서 리턴
+함수에 들어온 체력값의 dp 값이 지금 돌아가는 함수의 cnt 값보다 낮고 0이 아니라면 리턴
+후에 dp는 초기화가 되지 않았음을 의미함으로 cnt 값을 넣어주고 발생할 수 있는 6가지의 경우를 돌려준다.
+다이나믹프로그래밍이라고 분류되는이유는 전에 구해놓았던 dp로 굳이 다시 구하지 않고 리턴 시킬 수 있기 때문이다.
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<climits>
+#include<cmath>
+#include<queue>
+
+#define endl "\n"
+#define MAX 987654321
+using namespace std;
+
+int N;
+int arr[3];
+int dp[66][66][66];
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> arr[i]; }
+}
+int result = MAX;
+void DP(int a, int b, int c, int cnt) {
+	if (a <= 0) { a = 0; }if (b <= 0) { b = 0; }if (c <= 0) { c = 0; }
+	if (a == 0 && b == 0 && c == 0) { result = min(result, cnt); return; }
+
+	if (dp[a][b][c] <= cnt && dp[a][b][c] != 0) { return; }
+	dp[a][b][c] = cnt;
+	DP(a - 9, b - 3, c - 1, cnt + 1);
+	DP(a - 9, b - 1, c - 3, cnt + 1);
+	DP(a - 1, b - 9, c - 3, cnt + 1);
+	DP(a - 3, b - 9, c - 1, cnt + 1);
+	DP(a - 1, b - 3, c - 9, cnt + 1);
+	DP(a - 3, b - 1, c - 9, cnt + 1);
+}
+
+void Solution() {
+	Input();
+	DP(arr[0], arr[1], arr[2], 0);
+	cout << result;
+
+}
+
+int main(void) {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Solution();
+}
