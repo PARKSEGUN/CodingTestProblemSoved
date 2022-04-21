@@ -1,0 +1,6 @@
+for (int i = 2; i <= Length; i += 2)
+	{
+		dp[Length] += (recur(i - 2) * recur(Length - i));
+		dp[Length] %= mod;
+	}
+  왜 이 반복문을 사용했는지 이해하기
