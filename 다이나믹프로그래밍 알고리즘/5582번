@@ -1,0 +1,39 @@
+확실 한번 접해본 문제는 훤씬 수월하게 해결할 수 있었다!
+
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+
+#define endl "\n"
+using namespace std;
+string s1, s2;
+void input() {
+	cin >> s1 >> s2;
+}
+int dp[4444][4444];
+void solve() {
+	int result = 0;
+	for (int i = 1; i <= s1.size(); i++) {
+		for (int j = 1; j <= s2.size(); j++) {
+			if (s1[i - 1] == s2[j - 1]) {
+				dp[i][j] = dp[i - 1][j - 1] + 1;
+				result = max(dp[i][j], result);
+			}
+		}
+	}
+
+	/*for (int i = 1; i <= s1.size(); i++) {
+		for (int j = 1; j <= s2.size(); j++) {
+			cout << dp[i][j] << " ";
+		}cout << endl;
+	}*/
+	cout << result;
+}
+
+int main(void) {
+	input();
+	solve();
+}
