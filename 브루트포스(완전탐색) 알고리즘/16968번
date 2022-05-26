@@ -1,0 +1,42 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+
+#define endl "\n"
+using namespace std;
+
+string input;
+char num[4];
+void Input() {
+	cin >> input;
+	for (int i = 0; i < input.size(); i++) { num[i] = input[i]; }
+}
+int result=1;
+void Solve() {
+	for (int i = 0; i < input.size(); i++) {
+		bool chk = false;
+		if (num[i] == 'd') {
+				if (i!=0&&num[i] == num[i-1]) {
+					chk = true;
+					result *=9;
+				}
+				else result *= 10;
+		}
+		else {
+			if (i != 0 && num[i] == num[i - 1]) {
+				chk = true;
+				result *= 25;
+			}
+			else result *= 26;
+		}
+	}
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
