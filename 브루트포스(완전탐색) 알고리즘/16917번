@@ -1,0 +1,55 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+
+#define endl "\n"
+using namespace std;
+
+int A, B, C, X, Y;
+bool set;
+void Input() {
+	cin >> A >> B >> C >> X >> Y;
+	if (A + B > C * 2) { set = true; }
+	if (A > C * 2) { A = C * 2; }
+	if (B > C * 2) { B = C * 2; }
+
+}
+int result;
+void Solve() {
+	if (X > Y) {
+		X -= Y;
+		if (set == false) {
+			result += (A + B) * Y;
+			result += A * X;
+		}
+		else {
+			result += C * 2 * Y;
+			result += A * X;
+		}
+	}
+	else if (X < Y) {
+		Y -= X; if (set == false) {
+			result += (A + B) * X;
+			result += B * Y;
+		}
+		else {
+			result += C * 2 * X;
+			result += B * Y;
+		}
+	}
+	else {
+		if (set == false) {
+			result += (A + B) * X;
+		}
+		else { result += C * X; }
+	}
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
