@@ -1,0 +1,87 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+
+#define endl "\n"
+using namespace std;
+
+int N, M, K;
+int siz[111][2];
+bool map[111][111];
+
+void Input() {
+	cin >> N >> M >> K;
+	for (int i = 0; i < K; i++) {
+		cin >> siz[i][0] >> siz[i][1];
+	}
+}
+int result;
+
+void reset() {
+	for (int i = 0; i < N; i++) {	//맵 초기화
+		for (int j = 0; j < M; j++) {
+			map[i][j] = false;
+		}
+	}
+}
+
+void Solve() {
+	for (int k = 0; k < K; k++) {	//1번째 스티커 그대로 붙임
+		if (siz[k][0] <= N && siz[k][1] <=M) {
+			for (int i = 0; i < siz[k][0]; i++) {
+				for (int j = 0; j < siz[k][1]; j++) {
+					map[i][j] = true;
+				}
+			}
+			for (int kk = k + 1; kk < K; kk++) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < M; j++) {
+						if (map[i][j] == false) {
+							if (i + siz[kk][0] - 1 < N && j + siz[kk][1] - 1 < M) {		//빈칸의 길이가 1만큼 남아있어도 2번째 스티커의 길이가 1이라면 들어오지 못하는 경우때문에 -1 을 해줌
+								result = max(result, siz[k][0] * siz[k][1] + siz[kk][0] * siz[kk][1]);
+							}
+							else if (i + siz[kk][1] - 1 < N && j + siz[kk][0] - 1 < M) {	//2번째 스티커를 90도 회전
+								result = max(result, siz[k][0] * siz[k][1] + siz[kk][0] * siz[kk][1]);
+							}
+						}
+					}
+				}
+			}
+			reset();
+		}
+	}
+
+	for (int k = 0; k < K; k++) {	//1번째 스티커를 90도 회전
+		if (siz[k][1] <= N && siz[k][0] <= M) {
+			for (int i = 0; i < siz[k][1]; i++) {
+				for (int j = 0; j < siz[k][0]; j++) {
+					map[i][j] = true;
+				}
+			}
+			for (int kk = k + 1; kk < K; kk++) {
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < M; j++) {
+						if (map[i][j] == false) {
+							if (i + siz[kk][0] - 1 < N && j + siz[kk][1] - 1 < M) {
+								result = max(result, siz[k][0] * siz[k][1] + siz[kk][0] * siz[kk][1]);
+							}
+							else if (i + siz[kk][1] - 1 < N && j + siz[kk][0] - 1 < M) {	//2번째 스티커를 90도 회전
+								result = max(result, siz[k][0] * siz[k][1] + siz[kk][0] * siz[kk][1]);
+							}
+						}
+					}
+				}
+			}
+			reset();
+		}
+	}
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
