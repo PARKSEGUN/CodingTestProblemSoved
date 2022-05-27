@@ -1,0 +1,24 @@
+#include<iostream>
+
+using namespace std;
+int N;
+int val[4] = { 1,5,10,50 };
+int result;
+int print[22];
+bool chk[1111];
+void DFS(int cnt, int start, int sum) {
+	if (cnt == N) {
+		if (chk[sum] == false) { result++;	chk[sum] = true; }
+		return;
+	}
+	for (int i = start; i < 4; i++) {
+		print[cnt] = val[i];
+		DFS(cnt + 1, i, sum + val[i]);
+	}
+}
+
+int main(void) {
+	cin >> N;
+	DFS(0, 0, 0);
+	cout << result;
+}
