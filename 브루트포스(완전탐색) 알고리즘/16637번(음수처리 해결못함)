@@ -1,0 +1,99 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+#include<climits>
+
+#define endl "\n"
+using namespace std;
+
+int N;
+char input[22];
+bool chk[22];
+char oper[3] = { '+','-','*' };
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> input[i]; }
+	if (N == 1) { cout << input[0]; exit(0); }
+}
+int result=INT_MIN;
+void makeMax() {
+	vector<int> vec;
+	vector<char> vecvec;
+	for (int i = 0; i < N; i++) {
+		if (chk[i] == true) {
+			if (input[i + 1] == '+') {
+				vecvec.push_back((input[i] - '0') + (input[i + 2] - '0') + '0');
+			}
+			else if (input[i + 1] == '-') {
+				if ((input[i] - '0') - (input[i + 2] - '0') < 0) { vecvec.push_back('!'); }
+				vecvec.push_back((input[i] - '0') - (input[i + 2] - '0') + '0');
+			}
+			else if (input[i + 1] == '*') {
+				vecvec.push_back((input[i] - '0') * (input[i + 2] - '0') + '0');
+			}
+
+			i += 2;
+		}
+		else vecvec.push_back(input[i]);
+	}
+	int sum = 0;
+	for (int i = 0; i < vecvec.size(); i++) { cout << vecvec[i] << " "; }cout << endl;
+	for (int i = 0; i < vecvec.size(); i++) {
+		if (i == 0) {
+			if (vecvec[0] == '!') { sum = vecvec[1] - '0'; cout << sum<<endl;
+			}
+			else sum += vecvec[i] - '0'; }
+		if (vecvec[i] == '+') {
+			if (vecvec[i + 1] == '!') { sum -= vecvec[i + 2] - '0'; i += 2; }
+			else sum += vecvec[i + 1] - '0'; i++;
+		}
+		else if (vecvec[i] == '-') {
+			if (vecvec[i + 1] == '!') { sum += vecvec[i + 2] - '0'; i += 2; }
+			else sum -= vecvec[i + 1] - '0'; i++;
+		}
+		else if (vecvec[i] == '*') {
+			if (vecvec[i + 1] == '!') { sum *= vecvec[i + 2] - '0'; sum *= -1; i += 2; }
+			else sum *= vecvec[i + 1] - '0'; i++;
+		}
+		//	cout << sum << endl;
+	}
+	result = max(result, sum);
+
+	//for (int i = 0; i < vec.size(); i++) { cout << vec[i] << " "; }cout << endl;
+
+
+}
+bool visited;
+
+void Solve() {
+	for (int k = 0; k < N; k += 2) {
+		for (int i = k; i < N; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (input[i] == oper[j]) {
+					if (visited == false) {
+						if (i - 1 >= 0)chk[i - 1] = true;
+						chk[i + 1] = true;
+						visited = true;
+						makeMax();
+						//for (int k = 0; k < N; k++) { cout << chk[k] << " "; }cout << endl;
+					}
+					else { visited = false; }
+				}
+
+			}
+
+		}
+
+		for (int i = 0; i < N; i++) { chk[i] = false; } visited = false;
+	}
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+
+}
