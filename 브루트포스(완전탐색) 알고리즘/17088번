@@ -1,0 +1,50 @@
+DFS로 해결할 수 있었고, DFS함수를 조건문을 통해 들어올 수 있게해서 시간초과를 막았다.
+
+#include<iostream>
+#include<limits.h>
+
+using namespace std;
+int N;
+int arr[111111];
+int result=INT_MAX;
+int smaller(int x, int y){
+  if(x<y){return x;}
+  else return y;
+}
+
+void DFS(int cnt,int sum){
+  int d=0;
+  if(cnt!=0){d=arr[1]-arr[0];}
+  if(cnt==N){
+      result=smaller(result,sum);
+    return;
+      }    
+
+  if(cnt<=1){
+    DFS(cnt+1,sum);
+    arr[cnt]++;
+    DFS(cnt+1,sum+1);
+    arr[cnt]-=2;
+    DFS(cnt+1,sum+1);
+    arr[cnt]++;
+  }
+  else{
+  if(cnt>1&&arr[cnt]-arr[cnt-1]==d){DFS(cnt+1,sum);}
+  
+  arr[cnt]++;
+  if(cnt>1&&arr[cnt]-arr[cnt-1]==d){DFS(cnt+1,sum+1);arr[cnt]--;}
+  else arr[cnt]--;
+  
+  arr[cnt]--;
+   if(cnt>1&&arr[cnt]-arr[cnt-1]==d){DFS(cnt+1,sum+1);arr[cnt]++;}
+  else arr[cnt]++;
+    }
+}
+
+int main(void){
+  cin>>N;
+  for(int i=0;i<N;i++){cin>>arr[i];}
+  DFS(0,0);
+  if(result==INT_MAX){cout<<-1;return 0;}
+  cout<<result;
+}
