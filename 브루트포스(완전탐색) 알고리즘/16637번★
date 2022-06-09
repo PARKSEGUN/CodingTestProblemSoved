@@ -1,0 +1,184 @@
+81이라는 문자형으로는 '?'를 나타내느것 같지만  정수를 표현하기위해서 -'0'을 사용해서 변환하려 했지만 자꾸 -187이라는 이상한 수가 나와서 답이 나오지않는다.
+해결하지 못했다.
+반례
+19 
+
+3-2*8-9*9+9*8-9*9+9
+
+계속 답이 나오지 않았던 이유는 char 의 범위는 -128~127 까지라서 -9*9를 해주고 '0'(48) 까지 빼주게 된다면 -129이 되므로 범위를 벗어나 계속 값이 바르게 나오지
+못했던 것이다.
+
+어떻게하면 char 자료형의 범위를 넘어가는 것을 수정할 수 있을지 생각했지만 마땅히 해결할 수 있는 방법이 생각나지 않아 아예 다시 다른 방법을 해결 하려고 했고 
+결국 얍문의 블로그에서 해답을 보고 해결했다.
+이분은  처음에 입력받을때에 정수와 연산자를 분류해서 저장하였고 DFS의 종료조건은 연산자의 수로 정의했다.
+괄호먼저 찾아서 계산하는 방법이 아닌 처음부터 DFS로 모든 경우의 수 즉 괄호가 쳐질 수 있는 모든 경우를 탐색했다.
+내가 작성했던 코드 방식은 연산자를 기준으로 모든 자리에 괄호를 쳐주고 괄호부터 계산했지만 이분은 DFS를 괄호가 쳐져있을때의 결과값 과 쳐지지 않았을때에 결과값을 계속
+가져가면서 해결하는 방식이였다. 
+괄호가 쳐져있을때라고 가정 하면 어차피 곱셈이든 덧셈이든 앞에서부터 계산하기 때문에  지금 탐색하고 있는 연산자의 한칸뒤를 확인하고 그 연산값을 구하고 다시 그
+구한 결과 값을 다시 지금 탐색하고 있는 연산자로 연산한 값을 구해서 DFS로 다시 넘겨준다. 이렇게 작성하게된다면 모든 경우의 수를 탐색할 수 있었다.
+한 문제에 너무 많은 투자를 하려 하지말고 일단은 많은 문제를 접해보자.
+
+처음 작성했던 코드----------------------------------------------------------------------------------
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+#include<climits>
+
+#define endl "\n"
+using namespace std;
+
+int N;
+char input[33];
+bool chk[33];
+char oper[3] = { '+','-','*' };
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> input[i]; }
+	if (N == 1) { cout << input[0]; exit(0); }
+}
+int result = INT_MIN;
+void makeMax() {
+	vector<int> vec;
+	vector<char> vecvec;
+	for (int i = 0; i < N; i++) {
+		if (chk[i] == true) {
+			if (input[i + 1] == '+') {
+				vecvec.push_back((input[i] - '0') + (input[i + 2] - '0') + '0');
+			}
+			else if (input[i + 1] == '-') {
+				vecvec.push_back((input[i] - '0') - (input[i + 2] - '0') + '0');
+			}
+			else if (input[i + 1] == '*') {
+				vecvec.push_back((input[i] - '0') * (input[i + 2] - '0') + '0');
+			}
+
+			i += 2;
+		}
+		else vecvec.push_back(input[i]);
+	}
+	int sum = 0;
+	for (int i = 0; i < N; i++) { cout << chk[i] << " "; }cout << endl;
+	for (int i = 0; i < vecvec.size(); i++) {
+		if (i == 0) {
+			 sum += (vecvec[i] - '0');
+		}
+		if (sum == 8) { cout <<vecvec[i+1]<<" "<< vecvec[i + 1] - '0' << endl; }
+		if (vecvec[i] == '+') {
+			
+			 sum += (vecvec[i + 1] - '0'); i++;
+		}
+		else if (vecvec[i] == '-') {
+		
+			 sum -= (vecvec[i + 1] - '0'); i++;
+		}
+		else if (vecvec[i] == '*') {
+			
+			 sum *= (vecvec[i + 1] - '0'); i++;
+		}
+		
+		cout << sum << endl;
+	}
+	//cout << sum << endl;
+	result = max(result, sum);
+
+	//for (int i = 0; i < vec.size(); i++) { cout << vec[i] << " "; }cout << endl;
+
+
+}
+
+void DFS(int cnt) {
+	if (cnt >= N) {
+		makeMax();
+		//for (int i = 0; i < N; i++) { cout << chk[i] << " "; }cout << endl;
+	}
+	else {
+		bool chkk = false;
+		for (int j = 0; j < 3; j++) {
+			if (input[cnt] == oper[j]) {
+				chkk = true;
+			}
+		}
+		if (chkk == true) {
+			DFS(cnt + 2);
+			chk[cnt - 1] = 1; chk[cnt + 1] = 1;
+			DFS(cnt + 4);
+			chk[cnt - 1] = 0; chk[cnt + 1] = 0;
+		}
+	}
+}
+void Solve() {
+
+}
+
+int main(void) {
+	Input();
+	//Solve();
+	DFS(1);
+	cout << result;
+}
+
+
+정답 코드--------------------------------------------------------------------------------------
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+#include<climits>
+
+#define endl "\n"
+using namespace std;
+
+
+vector<int> num;
+vector<char> oper;
+int N;
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		if (i % 2 == 0) { int a; cin >> a; num.push_back(a); }
+		else { char a; cin >> a; oper.push_back(a); }
+	}
+}
+
+int Cal(int a, int b, char c) {
+	if (c == '+') {
+		return a + b;
+	}
+	else if (c == '-') {
+		return a - b;
+	}
+	else if (c == '*') {
+		return a * b;
+	}
+}
+
+int result = INT_MIN;
+void DFS(int cnt, int sum) {
+	if (cnt >= oper.size()) {
+		result = max(result, sum);
+		return;
+	}
+	int cur_result = Cal(sum, num[cnt + 1], oper[cnt]);
+	DFS(cnt + 1, cur_result);
+	if (cnt + 1 < oper.size()) {
+		int result1 = Cal(num[cnt + 1], num[cnt + 2], oper[cnt + 1]);
+		int result2 = Cal(sum, result1, oper[cnt]);
+		DFS(cnt + 2, result2);
+	}
+}
+
+void Solve() {
+	if (N == 1) { cout << num[0]; return; }
+	DFS(0, num[0]);
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
