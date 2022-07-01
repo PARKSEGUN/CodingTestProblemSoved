@@ -1,0 +1,127 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cmath>
+
+
+#define endl "\n"
+using namespace std;
+int N, M, K;
+int map[55][55];
+int subMap[55][55];
+int rota[10][3];
+void  Input() {
+	cin >> N >> M >> K;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+			subMap[i][j] = map[i][j];
+		}
+	}
+	for (int i = 0; i < K; i++) {
+		cin >> rota[i][0] >> rota[i][1] >> rota[i][2];
+	}
+}
+void print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << map[i][j] << " ";
+		}cout << endl;
+
+	}
+}
+void Rotation(int stx, int sty, int endx, int endy) {
+	int start = stx;	//움직이는 좌표
+	int start2 = sty;
+
+	int stt1 = stx;	//로테이션 시작점
+	int stt2 = sty;
+	int end = endx;	//로테이션 끝점
+	int end1 = endy;
+
+	int tmp = map[start][start2];
+	int tmp2;
+	while (start2 + 1 <= end1) {
+		tmp2 = map[start][start2 + 1];
+		map[start][start2 + 1] = tmp;
+		tmp = tmp2;
+		start2++;
+	}
+	while (start + 1 <= end) {
+		tmp2 = map[start + 1][start2];
+		map[start + 1][start2] = tmp;
+		tmp = tmp2;
+		start++;
+	}
+	while (start2 - 1 >= stt2) {
+		tmp2 = map[start][start2 - 1];
+		map[start][start2 - 1] = tmp;
+		tmp = tmp2;
+		start2--;
+	}
+	while (start - 1 >= stt1) {
+		tmp2 = map[start - 1][start2];
+		map[start - 1][start2] = tmp;
+		tmp = tmp2;
+		start--;
+	}
+
+
+}
+bool visited[11];
+int arr[11];
+void copy() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			map[i][j] = subMap[i][j];
+		}
+	}
+}
+int result = 987654321;
+void findMax() {
+	for (int i = 0; i < N; i++) {
+		int sum = 0;
+		for (int j = 0; j < M; j++) {
+			sum += map[i][j];
+		}
+		result = min(sum, result);
+	}
+}
+void DFS(int cnt) {
+
+	if (cnt == K) {
+		for (int k = 0; k < K; k++) {
+			int i = arr[k];
+			int one = rota[i][0] - rota[i][2] - 1;
+			int two = rota[i][1] - rota[i][2] - 1;
+			int three = rota[i][0] + rota[i][2] - 1;
+			int four = rota[i][1] + rota[i][2] - 1;
+			while (one != three || two != four) {
+				Rotation(one, two, three, four);
+				one++; two++;
+				three--; four--;
+			}
+		}
+		findMax();
+		copy();
+	}
+	else {
+		for (int i = 0; i < K; i++) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				arr[cnt] = i;
+				DFS(cnt + 1);
+				visited[i] = false;
+			}
+		}
+	}
+}
+void Solve() {
+	DFS(0);
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
