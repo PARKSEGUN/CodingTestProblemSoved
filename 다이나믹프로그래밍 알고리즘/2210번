@@ -1,0 +1,72 @@
+DFS를 사용해서 쉽게 해결 할 수있었다.
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cmath>
+
+#define endl "\n"
+using namespace std;
+
+int map[6][6];
+void  Input() {
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+
+vector<vector<int>> vec;
+int arr[10];
+bool chkSame(vector<int> vv) {
+	if (vec.size() == 0) { return true; }
+
+	for (int i = 0; i < vec.size(); i++) {
+		int sum = 0;
+		for (int j = 0; j < vv.size(); j++) {
+			if (vec[i][j] == vv[j]) { sum++; }
+		}
+		if (sum == 6) { return false; }
+	}
+	 return true;
+}
+void DFS(int cnt,int x,int y) {
+	if (cnt == 6) {
+		vector<int> vv;
+		for (int i = 0; i < 6; i++) {
+			vv.push_back(arr[i]);
+		}
+		if(chkSame(vv))vec.push_back(vv);
+	}
+	else {
+		arr[cnt] = map[x][y];
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if(dx>=0&&dx<5&&dy>=0&&dy<5)DFS(cnt + 1, dx, dy);
+		}
+	}
+}
+
+void Solve() {
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			DFS(0, i, j);
+		}
+	}
+
+	//for (int i = 0; i < vec.size(); i++) {
+	//	for (int j = 0; j < vec[i].size(); j++) {
+	//		cout << vec[i][j] << " ";
+	//	}cout<<endl;
+	//}
+	cout << vec.size();
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
