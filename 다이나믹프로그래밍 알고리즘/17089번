@@ -1,0 +1,60 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cmath>
+
+#define endl "\n"
+using namespace std;
+int N, M;
+vector<pair<int, int>> noMix;
+bool chk[4444][4444];
+void  Input() {
+	cin >> N >> M;
+	int a, b;
+	for (int i = 0; i < M; i++) {
+		cin >> a >> b;
+		chk[a][b] = true;
+		chk[b][a] = true;
+	}
+}
+int arr[5];
+int result=987654321;
+void DFS(int cnt,int range) {
+	if (cnt == 0) {
+		for (int i = range; i <= N; i++) { arr[cnt] = i; DFS(cnt + 1, i + 1); }
+	}
+	else if (cnt == 1) {
+		for (int i = range; i <= N; i++) {
+			if (chk[arr[0]][i] == true) {
+				arr[cnt] = i; DFS(cnt + 1, i + 1);
+			}
+		}
+	}
+	else if (cnt == 2) {
+		for (int i = range; i <= N; i++) {
+			if (chk[arr[1]][i] == true&& chk[arr[0]][i] == true) {
+				arr[cnt] = i; DFS(cnt + 1, i + 1);
+			}
+		}
+	}
+	else if (cnt == 3) {
+		int sum = 0;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 1; j <= N; j++) {
+				if (chk[arr[i]][j] == true) { sum++; }
+			}
+		}
+		result = min(sum, result);
+	}
+}
+
+void Solve() {
+	DFS(0, 1);
+	if (result == 987654321) { cout << -1; return; }
+	cout << result-6;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
