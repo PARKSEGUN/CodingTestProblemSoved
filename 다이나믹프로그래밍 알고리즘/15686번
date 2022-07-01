@@ -1,0 +1,62 @@
+DFS를 사용해서 쉽게 해결 할 수 있는 문제였다.
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cmath>
+
+#define endl "\n"
+using namespace std;
+
+int N, M;
+int map[55][55];
+vector<pair<int, int>> chik;
+void  Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 2) { chik.push_back({ i, j }); }
+		}
+	}
+}
+
+int arr[15];
+
+int Distance() {
+	int  allSum = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (map[i][j] == 1) {
+				int sum = 987654321;
+				for (int k = 0; k < M; k++) {
+					sum = min(sum, abs(i - chik[arr[k]].first) + abs(j - chik[arr[k]].second));
+				}
+				allSum += sum;
+			}
+		}
+	}
+	return allSum;
+}
+int result = 987654321;
+void DFS(int cnt, int range) {
+	if (cnt == M) {
+		result = min(result, Distance());
+	}
+	else {
+		for (int i = range; i < chik.size(); i++) {
+			arr[cnt] = i;
+			DFS(cnt + 1, i + 1);
+		}
+	}
+}
+
+void Solve() {
+	DFS(0, 0);
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
