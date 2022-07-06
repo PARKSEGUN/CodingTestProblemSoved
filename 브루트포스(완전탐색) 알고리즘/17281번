@@ -1,0 +1,102 @@
+DFS를 사용하고 문제를 천천히 읽어보면 쉽게 해결할 수 있었다.
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<cmath>
+#include<vector>
+//#include<windows.h>
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+int inning[55][10];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < 9; j++) {
+			cin >> inning[i][j];
+		}
+	}
+
+}
+bool visited[11];
+int arr[11];
+int result = 0;
+
+void play() {	//정해진 타자 순서로 경기 진행
+	int i = 0;
+	int score = 0;
+	for (int n = 0; n < N; n++) {
+		bool ground[3]; ground[0] = false; ground[1] = false; ground[2] = false;
+		int outCount = 0;
+		while (outCount!=3) {
+			int k = inning[n][arr[i]];
+			if (k == 0) {				outCount++;			}
+			else if (k == 1) {
+				if (ground[2] == true) { ground[2] = false; score++; }
+				if (ground[1] == true) { ground[1] = false; ground[2] = true; }
+				if (ground[0] == true) { ground[0] = false; ground[1] = true; }
+				ground[0] = true;
+			}
+			else if (k == 2) {
+				if (ground[2] == true) { ground[2] = false; score++; }
+				if (ground[1] == true) { ground[1] = false; score++; }
+				if (ground[0] == true) { ground[0] = false; ground[2] = true; }
+				ground[1] = true;
+			}
+			else if (k == 3) {
+				if (ground[2] == true) { ground[2] = false; score++; }
+				if (ground[1] == true) { ground[1] = false; score++; }
+				if (ground[0] == true) { ground[0] = false; score++; }
+				ground[2] = true;
+			}
+			else if (k == 4) {
+				if (ground[2] == true) { ground[2] = false; score++; }
+				if (ground[1] == true) { ground[1] = false; score++; }
+				if (ground[0] == true) { ground[0] = false; score++; }
+				score++;
+			}
+			i++;
+			if (i == 9) { i = 0; }
+		}
+	}
+	result = max(result, score);
+}
+
+void DFS(int cnt) {
+	if (cnt == 9) {
+		play();
+	}
+	else if (cnt == 3) {
+		arr[cnt] = 0;
+		DFS(cnt + 1);
+	}
+	else {
+		for (int i = 1; i < 9; i++) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				arr[cnt] = i;
+				DFS(cnt + 1);
+				visited[i] = false;
+			}
+		}
+	}
+}
+
+void Solve() {
+	DFS(0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
