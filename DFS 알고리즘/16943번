@@ -1,0 +1,64 @@
+이번문제 또한 DFS를 사용해서 쉽게 해결할 수 있었다.
+
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<queue>
+#include<deque>
+#include<vector>
+#include<climits>
+
+#define endl "\n"
+using namespace std;
+
+string a;
+int b;
+int input[11];
+void Input() {
+	cin >> a >> b;
+	for (int i = 0; i < a.size(); i++) {
+		input[i] = a[i]-'0';
+	}
+}
+int arr[11];
+bool visited[11];
+
+int connect(int x,int n){	//잘라놓았던 값들 다시 연결
+	while (n >0) {
+		x *= 10;
+		n--;
+	}
+	return x;
+}
+int result;
+void DFS(int cnt) {
+	if (cnt == a.size()) {
+		if (arr[0] != 0) {
+			int sum = 0;
+			for (int i = 0; i < cnt; i++) {
+				sum += connect(arr[i], cnt-1 - i);
+			}
+			if (sum < b) { result = max(result, sum); }
+		}
+	}
+	else {
+		for (int i = 0; i < a.size(); i++) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				arr[cnt] = input[i];
+				DFS(cnt + 1);
+				visited[i] = false;
+			}
+		}
+	}
+}
+void Solve() {
+	DFS(0);
+	if (result == 0) { cout << -1; return; }
+	cout << result;
+}
+
+int main(void) {
+	Input();
+	Solve();
+}
