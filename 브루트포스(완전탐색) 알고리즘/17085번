@@ -1,0 +1,102 @@
+반례를 쉽게 찾을수 없었을 것 같다.
+문제는 간단했지만, 집중하지 못해서 시간이 오래걸렸다.
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<cmath>
+#include<vector>
+//#include<windows.h>
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+char map[22][22];
+
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+int possible(char submap[][22], int x, int y) {
+
+	int k = 0;
+	while (x + k < N && x - k >= 0 && y + k < M && y - k >= 0) {
+		for (int i = 0; i < 4; i++) {
+			if (submap[x + dix[i] * k][y + diy[i] * k] != '#') { return k - 1; }
+		}
+		k++;
+	}
+return k - 1;
+}
+
+void print(char submap[][22]) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << submap[i][j] << " ";
+		}cout << endl;
+	}cout << endl;
+}
+int result;
+void DFS(char submap[][22], int x, int y, int cnt, int sum) {
+
+	if (y >= M) { x++; y = 0; }
+	if (x >= 0 && x < N && y >= 0 && y < M) {
+		int k = possible(submap, x, y);
+		if (submap[x][y] == '#') {
+			for (int kk = 0; kk <= k; kk++) {
+				for (int i = 0; i <= kk; i++) {
+
+					for (int j = 0; j < 4; j++) {
+						submap[x + dix[j] * i][y + diy[j] * i] = '0';
+					}
+				}
+				//print(submap);
+
+				if (cnt + 1 == 2) {
+					result = max(result, sum * (kk * 4 + 1));
+				//	cout << result << endl;	system("pause");
+					for (int i = 0; i <= kk; i++) {
+
+						for (int j = 0; j < 4; j++) {
+							submap[x + dix[j] * i][y + diy[j] * i] = '#';
+						}
+					}
+				}
+				else {
+					DFS(submap, x, y + 1, cnt + 1, sum * kk * 4 + 1);
+					for (int i = 0; i <= kk; i++) {
+
+						for (int j = 0; j < 4; j++) {
+							submap[x + dix[j] * i][y + diy[j] * i] = '#';
+						}
+					}
+				}
+			}
+		}
+		DFS(submap, x, y + 1, cnt, sum);
+
+	}
+}
+
+void Solve() {
+	DFS(map, 0, 0, 0, 1);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
