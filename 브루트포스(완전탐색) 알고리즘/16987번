@@ -1,0 +1,65 @@
+DFS를 사용해서 쉽게 해결할 수 있었다.
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+
+int N;
+vector<pair<int, int>> egg;		//<내구도, 무게>
+bool brk[11];	//계란이 깨졌는지 확인하는 변수
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		int a, b;
+		cin >> a >> b;
+		egg.push_back({ a,b });
+	}
+}
+int result;
+
+void print() {
+	for (int i = 0; i < N; i++) {
+		cout << egg[i].first << " " << egg[i].second << " " << brk[i] << endl;
+	}
+}
+void DFS(int cnt,int sum) {
+	if (cnt == N) { result = max(result, sum); return; }
+	if (brk[cnt] == true) { DFS(cnt + 1, sum); return; }
+	bool chk = false;
+	for (int i = 0; i < N; i++) {
+		if (brk[i] == false&&i!=cnt) {
+			chk = true;
+			egg[cnt].first -= egg[i].second;
+			if (egg[cnt].first <= 0) { brk[cnt] = true; sum++; }
+			egg[i].first -= egg[cnt].second;
+			if (egg[i].first <= 0) { brk[i] = true; sum++; }
+			 DFS(cnt + 1, sum);
+			if (egg[i].first <= 0) { brk[i] = false; sum--; }
+			egg[i].first += egg[cnt].second;
+			if (egg[cnt].first <= 0) { brk[cnt] = false; sum--; }
+			egg[cnt].first += egg[i].second;
+		}
+	}
+	if (chk == false) { DFS(cnt + 1, sum); return; }
+}
+
+void Solve() {
+	DFS(0, 0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
