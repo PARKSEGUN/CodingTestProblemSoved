@@ -1,0 +1,103 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+
+int N, M;
+int map[22][22];
+int subMap[22][22];
+
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+			subMap[i][j] = map[i][j];
+		}
+	}
+}
+
+void copy() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			map[i][j] = subMap[i][j];
+		}
+	}
+}
+int dix[4] = { 1,-1,0,0 };
+int diy[4] = { 0,0,-1,1 };
+bool visited[22][22];
+int result;
+
+void subSolve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 2 && visited[i][j] == false) {
+				DFS(0, i, j);
+			}
+		}
+	}
+}
+int sum;/////////////////////////총 잡아먹힐 바둑돌의개수를 구하는 과정부터
+void DFS(int cnt, int x, int y) {
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (map[dx][dy] == 0){return;
+		}
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (map[dx][dy] == 2) {///////////////////총 잡아먹힐 바둑돌의개수를 구하는 과정부터
+				DFS(cnt + 1, )
+			}
+		}
+}
+
+	void Solve() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (map[i][j] == 0) {
+					map[i][j] = 1;
+					for (int ii = i; ii < N; ii++) {
+						for (int jj = 0; jj < M; jj++) {
+							bool chk = false;
+							if (ii == i) {
+								if (jj > j) {
+									if (map[ii][jj] == 0) {
+										map[ii][jj] = 1;
+										chk = true;
+										DFS(0, 0, 0);
+										map[ii][jj] = 0;
+									}
+								}
+							}
+							else {
+								if (map[ii][jj] == 0) {
+									map[ii][jj] = 1;
+									chk = true;
+									DFS(0, 0, 0);
+									map[ii][jj] = 0;
+								}
+							}
+						}
+					}
+					map[i][j] = 0;
+				}
+			}
+		}
+	}
+
+	int main(void) {
+		ios::sync_with_stdio(0);
+		cin.tie(0);
+		cout.tie(0);
+		Input();
+		Solve();
+	}
