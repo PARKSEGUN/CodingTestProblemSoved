@@ -1,0 +1,113 @@
+코드를 작성할때 사소한 실수 하나로 시간은 허비하는 경우가 많았다.
+너무나도 사소한 실수 하나로 무너질 수 있으니 신경써서 작성하자.
+
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+
+int map[11][11];
+void Input() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+bool visited[11][11];
+
+void print() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			cout << visited[i][j] << " ";
+		}cout << endl;
+	}
+}
+int numPaper[5];
+
+int subDFS(int x,int y) {	//1이 나온자리에서 최대 얼마나 큰 색종이가 들어가는지 알려주는 함수
+	int n = -1;
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i <= k; i++) {
+			for (int j = 0; j <= k; j++) {
+				if (x + i < 10 && y + j < 10) {
+
+					if (map[x + i][y + j] != 1 || visited[x + i][y + j] == true) { return n; }
+				}
+				else { return n; }
+			}
+		}
+		n++;
+	}
+	return n;
+}
+int result=987654321;
+
+bool chkEnd() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (map[i][j] == 1) {
+				if (visited[i][j] != true) { return false; }
+			}
+		}
+	}
+	return true;
+}
+
+void DFS(int x, int y) {
+
+	if (x == 9 && y ==10) {
+
+			int sum = 0;
+			for (int i = 0; i < 5; i++) {
+				sum += numPaper[i];
+			}
+			result = min(result, sum);
+			return;
+	}
+	if (y == 10) { x++; y = 0; }
+	if (map[x][y] == 1 && visited[x][y] == false) {
+		int k = subDFS(x, y);
+		for (int kk = 0; kk <= k; kk++) {
+			if (numPaper[kk] + 1 != 6) {
+				for (int ii = 0; ii <= kk; ii++) {
+					for (int jj = 0; jj <= kk; jj++) {
+						visited[x + ii][y + jj] = true;
+					}
+				}
+				numPaper[kk]++;
+				DFS(x, y+1);
+				numPaper[kk]--;
+				for (int ii = 0; ii <= kk; ii++) {
+					for (int jj = 0; jj <= kk; jj++) {
+						visited[x + ii][y + jj] = false;
+					}
+				}
+			}
+		}
+	}
+	else {
+		DFS(x, y+1);
+	}
+}
+
+void Solve() {
+	DFS(0, 0);
+	if (result == 987654321) { result = -1; }
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
