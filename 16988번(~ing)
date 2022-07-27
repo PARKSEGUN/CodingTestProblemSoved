@@ -1,3 +1,8 @@
+1.맵을 돌면서 검은 돌은 찾고 찾았다면 그 검은돌 주변에 빈칸은 없는지 확인
+2.없다면 그 주변의 또다른 검은 돌을 찾아서 반복, 하지만 빈칸이 발견되었다면 그 검은돌과 연결된 다른 검은 돌은 탐색한다, 하지만 이 과정은 최대값을 구하는 과정이아닌
+이 검은 돌과 연결되어있는 다른 검은 돌을 또다시 탐색하게 되는 중복적인 경우를 제외하기위함.
+3. 검은 돌을 탐색하면서 개수를 파악해주고 검은 돌과 연결된 마지막 검은돌까지도 주위에 빈칸이 없다고 확인되었을때에는 sum에 더해주고 result에 최대값을 유지시켜준다.
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -22,82 +27,111 @@ void Input() {
 		}
 	}
 }
-
-void copy() {
+bool visited[22][22];
+void reset() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
-			map[i][j] = subMap[i][j];
+			visited[i][j] = 0;
 		}
+	}
+}
+
+void print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << map[i][j] << " ";
+		}
+		cout << endl;
 	}
 }
 int dix[4] = { 1,-1,0,0 };
 int diy[4] = { 0,0,-1,1 };
-bool visited[22][22];
+
 int result;
 
-void subSolve() {
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
-			if (map[i][j] == 2 && visited[i][j] == false) {
-				DFS(0, i, j);
+int sum;
+bool chk;
+void DFS(int x, int y) {
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+			if (map[dx][dy] == 0) { chk = true; }
+		}
+	}
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+			if (map[dx][dy] == 2 && visited[dx][dy] == false) {
+				visited[dx][dy] = true;
+				sum++;
+				DFS(dx, dy);
 			}
+
 		}
 	}
 }
-int sum;/////////////////////////총 잡아먹힐 바둑돌의개수를 구하는 과정부터
-void DFS(int cnt, int x, int y) {
-		for (int i = 0; i < 4; i++) {
-			int dx = x + dix[i];
-			int dy = y + diy[i];
-			if (map[dx][dy] == 0){return;
-		}
-		for (int i = 0; i < 4; i++) {
-			int dx = x + dix[i];
-			int dy = y + diy[i];
-			if (map[dx][dy] == 2) {///////////////////총 잡아먹힐 바둑돌의개수를 구하는 과정부터
-				DFS(cnt + 1, )
+void subSolve() {
+	int SUM = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 2 && visited[i][j] == false) {
+				visited[i][j] = true;
+				sum++;
+				DFS(i, j);
+
+				if (chk == false) { SUM += sum; }
+				chk = false; sum = 0;
+
 			}
 		}
+	}
+	reset();
+	result = max(result, SUM);
 }
 
-	void Solve() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (map[i][j] == 0) {
-					map[i][j] = 1;
-					for (int ii = i; ii < N; ii++) {
-						for (int jj = 0; jj < M; jj++) {
-							bool chk = false;
-							if (ii == i) {
-								if (jj > j) {
-									if (map[ii][jj] == 0) {
-										map[ii][jj] = 1;
-										chk = true;
-										DFS(0, 0, 0);
-										map[ii][jj] = 0;
-									}
-								}
-							}
-							else {
+
+
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 0) {
+				map[i][j] = 1;
+				for (int ii = i; ii < N; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						if (ii == i) {
+							if (jj > j) {
 								if (map[ii][jj] == 0) {
+
 									map[ii][jj] = 1;
-									chk = true;
-									DFS(0, 0, 0);
+									//print();
+									subSolve();
 									map[ii][jj] = 0;
 								}
 							}
 						}
+						else {
+							if (map[ii][jj] == 0) {
+								map[ii][jj] = 1;
+								//print();
+								subSolve();
+								map[ii][jj] = 0;
+							}
+						}
 					}
-					map[i][j] = 0;
 				}
+				map[i][j] = 0;
 			}
 		}
 	}
+	cout << result;
+}
 
-	int main(void) {
-		ios::sync_with_stdio(0);
-		cin.tie(0);
-		cout.tie(0);
-		Input();
-		Solve();
-	}
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
