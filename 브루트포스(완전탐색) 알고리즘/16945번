@@ -1,0 +1,104 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+
+
+int map[3][3];
+void Input() {
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+
+bool chkSquare(int tmp[][3]) {
+	int sum = 0;
+	for (int i = 0; i < 3; i++) {
+		sum += tmp[0][i];
+	}
+	int arr[10] = { 0 };
+	for (int i = 0; i < 3; i++) {
+		arr[0] += tmp[1][i];
+		arr[1] += tmp[2][i];
+		arr[2] += tmp[i][0];
+		arr[3] += tmp[i][1];
+		arr[4] += tmp[i][2];
+		arr[5] += tmp[i][i];
+		arr[6] += tmp[2-i][i];
+	}
+	for (int i = 0; i < 7; i++) {
+		if (sum != arr[i]) { return false; }
+	}
+	return true;
+}
+int result=987654321;
+void base() {
+	int baseMap[3][3];
+	for (int k = 1; k <= 9; k++) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				baseMap[i][j] = k;
+			}
+		}
+		int sum = 0;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				sum += abs(map[i][j] - baseMap[i][j]);
+			}
+		}
+		result = min(result, sum);
+	}
+}
+int arr[9];
+bool visited[9];
+void DFS(int cnt) {
+	if (cnt == 9) {
+		int ex[3][3];
+		int k = 0;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				ex[i][j] = arr[k];
+				k++;
+			}
+		}
+		if (chkSquare(ex)) {
+			int sum = 0;
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					sum += abs(map[i][j] - ex[i][j]);
+				}
+			}
+			result = min(result, sum);
+		}
+	}
+	else {
+		for (int i = 0; i < 9; i++) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				arr[cnt] = i + 1;
+				DFS(cnt + 1);
+				visited[i] = false;
+			}
+		}
+	}
+}
+void Solve() {
+	DFS(0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
