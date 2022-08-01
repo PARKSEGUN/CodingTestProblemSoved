@@ -1,0 +1,148 @@
+왜 도착지점에 가지 못하는지 
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include<windows.h>
+
+
+#define endl "\n"
+
+using namespace std;
+
+int Map[5][5][5];
+
+void Input() {
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				cin >> Map[k][i][j];
+			}
+		}
+	}cout << endl << endl;
+}
+
+void print() {
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				cout << Map[k][i][j] << " ";
+			}cout << endl;
+		}
+	}cout << endl << endl;
+}
+void rotation(int map[][5][5],int n) {		//n번째 층을 오른쪽을 회전시키는 함수
+	int subMap[5][5] = { 0, };
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			subMap[j][4-i] = map[n][i][j];
+		}
+	}
+	
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			map[n][i][j] = subMap[i][j];
+		}
+	}
+}
+void back(int map[][5][5],int n) {		//다시 되돌아가는 함수
+	int subMap[5][5] = { 0, };
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			subMap[4-j][i] = map[n][i][j];
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			map[n][i][j] = subMap[i][j];
+		}
+	}
+}
+bool visited[5][5][5];
+int xx, yy, zz;	//도착지점
+int result=987654321;
+void move(int cnt, int a, int b, int c) {
+	if (a == xx && b == yy && c == zz) {
+		cout << "asdfasdf";
+		result = min(result, cnt);
+	}
+	else {
+		if (a-1 < 5 && a-1 >= 0) {
+			if (Map[a - 1][b][c] == 1 && visited[a - 1][b][c] == false) { visited[a - 1][b][c] = true; move(cnt + 1, a - 1, b, c); }
+		}
+		if (a+1 < 5 && a+1 >= 0) {
+			if (Map[a + 1][b][c] == 1 && visited[a + 1][b][c] == false) { visited[a + 1][b][c] = true; move(cnt + 1, a + 1, b, c); }
+		}
+		if (b-1 < 5 && b-1 >= 0) {
+			if (Map[a][b - 1][c] == 1 && visited[a][b - 1][c] == false) { visited[a][b - 1][c] = true; move(cnt + 1, a, b - 1, c); }
+		}
+		if (b+1 < 5 && b+1 >= 0) {
+			if (Map[a][b + 1][c] == 1 && visited[a][b + 1][c] == false) { visited[a][b + 1][c] = true; move(cnt + 1, a, b + 1, c); }
+		}
+		if (c-1 < 5 && c-1 >= 0) {
+			if (Map[a][b][c - 1] == 1 && visited[a][b][c - 1] == false) { visited[a][b][c - 1] = true; move(cnt + 1, a, b, c - 1); }
+		}
+		if (c+1 < 5 && c+1 >= 0) {
+			if (Map[a][b][c + 1] == 1 && visited[a][b][c + 1] == false) { visited[a][b][c + 1] = true; move (cnt + 1, a, b, c + 1); }
+		}
+	}
+}
+
+void start() {		//이동 시작
+	int x=0, y=0, z=0;
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			for (int k = 0; k < 2; k++) {
+				if (i == 1) { x = 4; }
+				else { x = 0; }
+				if (j == 1) { y = 4; }
+				else { y = 0; }
+				if (k == 1) { z = 4; }
+				else { z = 0; }
+				xx = 4 - x; yy = 4 - y; zz = 4 - z;
+				move(0,x, y, z);
+			}
+		}
+	}
+}
+bool chk[5][4];
+int arr[5];
+void DFS(int cnt) {		
+	
+	if (cnt == 5) {
+		for (int i = 0; i < arr[0]; i++) { rotation(Map, 0); }
+		for (int i = 0; i < arr[1]; i++) { rotation(Map, 1); }
+		for (int i = 0; i < arr[2]; i++) { rotation(Map, 2); }
+		for (int i = 0; i < arr[3]; i++) { rotation(Map, 3); }
+		for (int i = 0; i < arr[4]; i++) { rotation(Map, 4); }
+		start();
+		for (int i = 0; i < arr[0]; i++) { back(Map, 0); }
+		for (int i = 0; i < arr[1]; i++) { back(Map, 1); }
+		for (int i = 0; i < arr[2]; i++) { back(Map, 2); }
+		for (int i = 0; i < arr[3]; i++) { back(Map, 3); }
+		for (int i = 0; i < arr[4]; i++) { back(Map, 4); } 
+
+	}
+	else {
+		for (int i = 0; i < 4; i++) {
+			arr[cnt] = i;
+			DFS(cnt + 1);
+		}
+	}
+}
+
+void Solve() {
+	DFS(0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
