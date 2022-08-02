@@ -1,0 +1,81 @@
+처음에 풀었던 방법은 visited 변수로 중복해서 탐색하지 않게 코드를 작성했지만 시간초과가 발생해서 다이나믹 프로그래밍을 이용해서 푸는 문제인걸 알았다.
+하지만 DP를 사용해서 해결하려 했지만 무엇때문인지는 몰라도 계속해서 시간초과가 발생했다.
+결론적으로 말하자면 visited 변수를 계속해서 초기화를 해주는 과정에서 시간초과가 발생한것이었다. 500*500 해서 250000*250000 이라는 수를 가볍게 생각했던 것 같다.
+visited 변수를 사용하지 않고 중복적으로 탐색하는 것을 막을 수 있을지 생각해보다가 DP를 이용해서 탐색하려는 곳에 "먼저 DP=-1 처리"를 해주게되면 다시돌아왔을때 
+DP가 저장이 되어있기때문에 중복하지 않고 바로  return 해서 끝낼 수 있는 방법도 있었다.
+visited 변수를 사용하지않고도 DP 를 사용해서 중복탐색을 방지할 수 있다는 것을 확실하게 알고 넘어가자.
+
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+char map[555][555];
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+bool visited[555][555];
+void reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = false;
+		}
+	}
+}
+int DP[555][555];
+bool DFS(int x, int y) {
+	if (x < 0 || x >= N || y < 0 || y >= M) {  return 1; }
+	if (DP[x][y] == 1) { return true; }
+	else if (DP[x][y] == -1) { return false; }
+	visited[x][y] = true;
+	if (map[x][y] == 'U') {
+		DP[x][y] = -1;
+		if (DFS(x - 1, y) == 1) { DP[x][y] = 1; return true; }
+		else return false;
+	}
+	else if (map[x][y] == 'R' ) {
+		DP[x][y] = -1;
+		if (DFS(x , y+1) == 1) { DP[x][y] = 1; return true; }
+		else return false;
+	}
+	else if (map[x][y] == 'D' ) {
+		DP[x][y] = -1;
+		if (DFS(x+1, y) == 1) { DP[x][y] = 1; return true; }
+		else return false;
+	}
+	else if (map[x][y] == 'L' ) {
+		DP[x][y] = -1;
+		if (DFS(x, y-1) == 1) { DP[x][y] = 1; return true; }
+		else return false;
+	}
+}
+int result;
+void Solve() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (DFS(i, j) == true) { result++; }
+			
+		}
+	}
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
