@@ -1,0 +1,201 @@
+간단한 실수였지만 코드가 너무 길어져서 어느 부분에서 실수를 했는지 찾지못했고 시간을 많이 허비해서 결국 블로그를 참고해서 해결했다.
+푸는 과정은 이해가 가지만 그 과정을 코드로 나타내는 과정이 쉽지 않았지만 결국 작성했으나 사소한 실수때문에 찝찝하게 해결했다. 
+오류를 찾아내 방법을 기르고 습관화 하자
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+
+#define endl "\n"
+
+using namespace std;
+
+int Map[5][5][5];
+int MM[5][5][5];
+
+void Input() {
+	int cnt = 0;
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				cin >> Map[k][i][j];
+				if (Map[k][i][j] == 1) { cnt++; }
+			}
+		}
+	}
+	if (cnt == 125) { cout << 12; exit(0); }
+	else if (cnt < 12) { cout << -1; exit(0); }
+}
+
+void print() {
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				cout << Map[k][i][j] << " ";
+			}cout << endl;
+		}
+	}cout << endl << endl;
+}
+void rotation(int map[][5][5],int n) {		//n번째 층을 오른쪽을 회전시키는 함수
+	int subMap[5][5] = { 0, };
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			subMap[j][4-i] = map[n][i][j];
+		}
+	}
+	
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			map[n][i][j] = subMap[i][j];
+		}
+	}
+}
+void back(int map[][5][5],int n) {		//다시 되돌아가는 함수
+	int subMap[5][5] = { 0, };
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			subMap[4-j][i] = map[n][i][j];
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			map[n][i][j] = subMap[i][j];
+		}
+	}
+}
+bool visited[5][5][5];
+int xx, yy, zz;	//도착지점
+int result=987654321;
+bool Visited[5][5][5];
+int dx[] = { 0,0,1,-1,0,0 };
+int dy[] = { 1,-1,0,0,0,0 };
+int dh[] = {0,0,0,0,1,-1 };
+
+
+int BFS() {
+
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				Visited[k][i][j] = false;
+			}
+		}
+
+	}
+	queue<pair<pair<int, int>, pair<int, int>>> Q;
+	Q.push(make_pair(make_pair(0, 0), make_pair(0, 0)));
+	Visited[0][0][0] = true;
+	while (Q.empty() == 0) {
+		int x = Q.front().first.first;
+		int y = Q.front().first.second;
+		int h = Q.front().second.first;
+		int cnt = Q.front().second.second;
+
+		Q.pop();
+		if (x == 5 - 1 && y == 5 - 1 && h == 5 - 1) {  return cnt; }
+		for (int i = 0; i < 6; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+			int nh = h + dh[i];
+			if (nx >= 0 && ny >= 0 && nh >= 0 && nx < 5 && ny < 5 && nh < 5) {
+				if (MM[nh][nx][ny] == 1 && Visited[nh][nx][ny] == false) {
+					Visited[nh][nx][ny] = true;
+					Q.push(make_pair(make_pair(nx, ny), make_pair(nh, cnt + 1)));
+				}
+			}
+		}
+	}
+	return -1;
+}
+
+
+void start() {		//이동 시작
+	if (MM[0][0][0] == 1 && MM[4][4][4] == 1) {
+		int res = BFS();
+		
+		if (res != -1) {
+
+			result = min(res, result);
+			
+		}
+	}
+}
+bool chk[5][4];
+int arr[5];
+
+
+
+
+void stackBlock(int a[]) {	//벽돌을 쌓아올림
+	int N = 0;
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				MM[N][i][j] = Map[a[k]][i][j];
+			}
+		}
+		N++;
+	}
+	start();
+}
+bool vis[5];
+int arr2[5];
+void stackDFS(int cnt) {	//벽돌을 쌓아올리는 순서를 만들어줌
+	if (cnt == 5) {
+		stackBlock(arr2);
+	}
+	else{
+		for (int i = 0; i < 5; i++) {
+			if (vis[i] == false) {
+				vis[i] = true;
+				arr2[cnt] = i;
+				stackDFS(cnt + 1);
+				vis[i] = false;
+			}
+		}
+	}
+}
+
+void DFS(int cnt) {		//각층별로 회전수를 지정해주는 함수
+	if (cnt == 5) {
+		for (int i = 0; i < arr[0]; i++) { rotation(Map, 0); }
+		for (int i = 0; i < arr[1]; i++) { rotation(Map, 1); }
+		for (int i = 0; i < arr[2]; i++) { rotation(Map, 2); }
+		for (int i = 0; i < arr[3]; i++) { rotation(Map, 3); }
+		for (int i = 0; i < arr[4]; i++) { rotation(Map, 4); }
+		stackDFS(0);
+
+		for (int i = 0; i < arr[0]; i++) { back(Map, 0); }
+		for (int i = 0; i < arr[1]; i++) { back(Map, 1); }
+		for (int i = 0; i < arr[2]; i++) { back(Map, 2); }
+		for (int i = 0; i < arr[3]; i++) { back(Map, 3); }
+		for (int i = 0; i < arr[4]; i++) { back(Map, 4); } 
+
+	}
+	else {
+		for (int i = 0; i < 4; i++) {
+			arr[cnt] = i;
+			DFS(cnt + 1);
+		}
+	}
+}
+
+void Solve() {
+	
+	DFS(0);
+	if (result == 987654321) { result = -1; }
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
