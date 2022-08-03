@@ -1,0 +1,156 @@
+처음에는 BFS를 사용해서 모든 거리를 직접 탐색하면서 최소거리를 찾았지만 맵이 넓어서인지 시간 초과가 발생해서  다른 방법을 생각하던중
+이 문제는 플로이드 워셜 알고리즘이 필요하다는 것을 알게되었다.
+물론 다른 방법으로도 해결할 수 있겠지만 플로이드 워셜 이라는 알고리즘으로 해결해보고싶었다.
+
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+
+
+#define endl "\n"
+
+using namespace std;
+
+int N, T;
+int map[1111][1111];
+bool special[1111][1111];	//특별한 도시 표기를 위한 변수
+vector<vector<int>> imfor;
+int n, m;
+void Input() {
+	cin >> N >> T;
+	vector<int> vv;
+	vv.push_back(0); vv.push_back(0); vv.push_back(0);
+	imfor.push_back(vv);
+	for (int i = 1; i <= N; i++) {
+		vector<int> vec;
+		int chk;
+		int x, y;
+		cin >> chk >> x >> y;
+		n = max(n, x + 1);
+		m = max(m, y + 1);
+		map[x][y] = i;
+		if (chk == 1) { special[x][y] = true; }
+		vec.push_back(chk); vec.push_back(x); vec.push_back(y);
+		imfor.push_back(vec);
+	}
+}
+bool visited[1111][1111];
+bool visited2[1111][1111];
+vector<int> result;
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+void reset() {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			visited[i][j] = false;
+		}
+	}
+}
+void reset2() {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			visited2[i][j] = false;
+		}
+	}
+}
+void print() {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cout << special[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+void BFS(int A, int B) {
+	reset(); reset2();
+	queue<pair<int, int>> q1;
+	q1.push({ imfor[A][1],imfor[A][2] });
+	queue<int> q2;
+	q2.push(0);
+	queue<int> q3;	//텔포를 이용했는지 확인하기위한 큐
+	q3.push(0);
+	visited[imfor[A][1]][imfor[A][2]] = true;
+	//cout << "여기 " << imfor[B][1] << " " << imfor[B][2] << endl;
+	int sum = 987654321;
+	while (q1.size() != 0) {
+		int x = q1.front().first;
+		int y = q1.front().second;
+		int cnt = q2.front();
+		int chk = q3.front();
+		//cout << x << " " << y << " " << cnt << endl;
+		bool one = false, two = false;
+		if (x == imfor[B][1] && y == imfor[B][2]) {
+			sum = min(sum, cnt);
+			
+		}
+
+		q1.pop(); q2.pop(); q3.pop();
+
+		if (special[x][y] == 1) {	//텔레포트가 가능한 지점이라면
+			for (int j = 1; j < imfor.size(); j++) {
+				if (imfor[j][0] == 1) {
+					if (visited2[imfor[j][1]][imfor[j][2]] == false) {
+						q1.push({ imfor[j][1],imfor[j][2] });
+						q2.push(cnt + T);
+						q3.push(1);
+						visited2[imfor[j][1]][imfor[j][2]] = true;
+					}
+				}
+			}
+		}
+		if (chk == 0) {
+			for (int i = 0; i < 4; i++) {
+				int dx = x + dix[i];
+				int dy = y + diy[i];
+				if (dx >= 0 && dx < n && dy >= 0 && dy < m) {
+					if (visited[dx][dy] == false) {
+						visited[dx][dy] = true;
+						q1.push({ dx,dy });
+						q2.push(cnt + 1);
+						q3.push(0);
+					}
+				}
+			}
+		}
+		else if (chk == 1) {
+			for (int i = 0; i < 4; i++) {
+				int dx = x + dix[i];
+				int dy = y + diy[i];
+				if (dx >= 0 && dx < n && dy >= 0 && dy < m) {
+					if (visited2[dx][dy] == false && visited[dx][dy] == false) {
+						visited2[dx][dy] = true;
+						q1.push({ dx,dy });
+						q2.push(cnt + 1);
+						q3.push(1);
+					}
+				}
+			}
+		}
+	}
+	result.push_back(sum);
+}
+
+
+
+void Solve() {
+	int K;
+	cin >> K;
+	for (int i = 0; i < K; i++) {
+		int A, B;
+		cin >> A >> B;
+		BFS(A, B);
+	}
+	for (int i = 0; i < result.size(); i++) { cout << result[i] << endl; }
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
