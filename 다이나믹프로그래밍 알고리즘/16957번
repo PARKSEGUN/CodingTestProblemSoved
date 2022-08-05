@@ -1,0 +1,84 @@
+문제를 해결하는 것은 간단했지만 시간초과를 발생하지 않게 만드는것이 중요했던 문제이다.
+x,y시작점과 xx,yy도착점이있을때 dp에 x,y 에서 시작하면 xx,yy 로 끝난다는 것을 기억해주어서 해결하려했지만 다시 시간초과가 발생해서 
+더 시간을 줄이는 방법은 없을까 생각하다가 x,y 에서 xx,yy 로 갈 때 지나가는 모든 좌표값을 dp에 xx,yy 로 저장을 해두는 것이었다.
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include<climits>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+int map[555][555];
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int result[555][555];
+int dp[555][555][2];	//각 지점에서 공이 어디서 멈추는지
+int dix[8] = { 0,0,-1,1, 1,1,-1,-1};
+int diy[8] = { -1,1,0,0 ,1,-1,1,-1};
+int xx, yy;	//공이 더이상 움직이지않을때에 좌표를 기억함 dp를 위해
+void DFS(int x, int y) {		
+	if (dp[x][y][0] != -1) {
+		result[dp[x][y][0]][dp[x][y][1]]++;
+		xx = dp[x][y][0]; yy = dp[x][y][1];
+		return;
+	}
+	int small = map[x][y];
+	int dir = -1;
+	for (int i = 0; i <8; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dy >= 0 && dx < N && dy < M) {
+			if (map[dx][dy] < small) { small = map[dx][dy]; dir = i; }
+		}
+	}
+	if (dir == -1) {
+		result[x][y]++;
+		xx = x; yy = y;
+		return;
+	}
+	else {
+		DFS(x + dix[dir], y + diy[dir]);
+		dp[x + dix[dir]][y + diy[dir]][0] = xx;
+		dp[x + dix[dir]][y + diy[dir]][1] = yy;
+	}
+	
+}
+void Solve() {
+	for (int i = 0; i < N; i++) {		//아직 값이 들어오지 않은 것을 -1로 나타냄
+		for (int j = 0; j < M; j++) {
+			dp[i][j][0] = -1;
+		}
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			xx = 0; yy = 0;
+			DFS(i, j);
+		}
+	}
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << result[i][j]<<" ";
+		}
+		cout << endl;
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
