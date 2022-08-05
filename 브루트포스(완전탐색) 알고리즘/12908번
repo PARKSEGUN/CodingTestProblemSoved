@@ -1,0 +1,83 @@
+잘 풀어냈다고 생각했는데 계속 정답을 받지 못해서 시간을 썻던 문제이다.
+문제를 정확하게 이해하지 못해서 생긴문제였다.
+이 문제에서는 숫자의 범위가 int , 즉 21억을 넘어가는 문제이기때문에 int 가 아닌 long long int 로 해결해줘야 하는 문제였다.
+이 사소한 문제 하나로 시간을 허비했고 이렇게 수정했지만 또 정답처리를 받지 못했던 이유는 자료형의 범위에만 신경을 쓰고있어서
+result 값을 최대로 지정해줬는데 이 값도 변경을 해줘야한다는 것을 까먹고 987654321 을 사용해서 오류가 발생했다.
+result 값을 LONG_MAX 로 지정한 후에야 AC를 맞을 수 있었다. 조금더 신중하게 문제를 확인해서 시간을 낭비하지 말자.
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include<climits>
+
+#define endl "\n"
+
+using namespace std;
+
+long long int x, y;	//출발지점
+long long int ex, ey; //복사하기위한 변수
+long long int xx, yy;		//도착지점
+vector<vector<long long int>> vec;
+
+void Input() {
+	cin >> x >> y >> xx >> yy;
+	ex = x; ey = y;
+	for (long long int i = 0; i < 3; i++) {
+		long long int a, b, c, d;
+		cin >> a >> b >> c >> d;
+		vector<long long int> v;
+		v.push_back(a); v.push_back(b); v.push_back(c); v.push_back(d);
+		vec.push_back(v);
+	}
+}
+long long int arr[5]; bool visited[5];
+long long int result=LONG_MAX;
+long long int goHome(long long int a, long long int b) {	//현재 좌표에서 집까지 거리
+	return (abs(a-xx) + abs(b - yy));
+}
+void DDFS(long long int cnt, long long int sum) {
+	if (cnt <= 3) {
+		result=min(result,goHome(x, y)+sum);
+		long long int a = x; long long int  b = y;
+		long long int ss = sum + abs(x - vec[arr[cnt]][0]) + abs(y - vec[arr[cnt]][1]);
+		x = vec[arr[cnt]][2]; y = vec[arr[cnt]][3];
+		DDFS(cnt + 1, ss + 10);
+		x = a; y = b;
+		ss = sum + abs(x - vec[arr[cnt]][2]) + abs(y - vec[arr[cnt]][3]);
+		x = vec[arr[cnt]][0]; y = vec[arr[cnt]][1];
+		DDFS(cnt + 1, ss + 10);
+		x = a; y = b;
+	}
+	
+}
+void DFS(long long int cnt) {
+	if (cnt == 3) {
+		x = ex; y = ey;
+		DDFS(0, 0);
+	}
+	else {
+		for (long long int i = 0; i < 3; i++) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				arr[cnt] = i;
+				DFS(cnt + 1);
+				visited[i] = false;
+			}
+		}
+	}
+}
+
+void Solve() {
+	DFS(0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
