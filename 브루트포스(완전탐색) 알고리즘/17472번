@@ -1,5 +1,226 @@
 첫번째로 풀었던 방법은 일일이 직접 탐색을 해보는 방식으로 작성했다.
 하지만 너무 코드가 난해하고 복잡해 져서 알아보니 각 섬들의 거리를 미리 저장해놓는 방법도 있었다.
+미리 저장해서 DFS로 순서를 정해주고 정해진 다리들이 모든 섬들 올바르게 연결되어있는지는 BFS로 확인시켜주었다.
+하지만 계속 오답이 나와서 또 많은 시간은 썻지만 결국은 코드 작성중에 제대로 집중하지 못하고 코드를 잘못 작성하는 실수를 했다.
+정말 사소한 실수로 멘탈이 무너지고 얼마나 많은 시간을 낭비하게 되는지 명심하자.
+
+
+------------------------정답코드------------------------------------
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include<climits>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+int map[11][11];
+bool island[10];	//섬을 모두 방문하기위한 bool 변수
+
+void DFS(int x, int y);
+void Input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int dix[4] = { 0,0,1,-1 }; //오른쪽,왼쪽,아래,위
+int diy[4] = { 1,-1,0,0 };
+bool visited[11][11];
+int num = 1;
+void print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << map[i][j] << " ";
+		}cout << endl;
+	}
+}
+int dis[11][11];		//섬들 간의 거리를 나타내는 변수
+void divide() {		//구역을 알기쉽게 번호로 저장
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (visited[i][j] == false && map[i][j] == 1) {
+				visited[i][j] = true;
+				queue<pair<int, int>> q;
+				q.push({ i,j });
+				map[i][j] = num;
+				island[num] = 1;
+				while (q.size() != 0) {
+					int xx = q.front().first;
+					int yy = q.front().second;
+
+					q.pop();
+					for (int i = 0; i < 4; i++) {
+						int dx = xx + dix[i];
+						int dy = yy + diy[i];
+						if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+							if (visited[dx][dy] == false && map[dx][dy] == 1) {
+								visited[dx][dy] = true;
+								q.push({ dx,dy });
+								map[dx][dy] = num;
+							}
+						}
+					}
+				} num++;
+			}
+		}
+	}
+	for (int i = 1; i < num; i++) {
+		for (int j = 1; j < num; j++) {
+			dis[i][j] = 987654321;
+		}
+	}
+}
+
+bool finish() {
+	for (int i = 0; i < 11; i++) { if (island[i] == 1) { return false; } }
+	return true;
+}
+
+vector<vector<int>> bridge;
+void meetSea(int x, int y, int dir, int start) {
+	int ss = 0;
+	while (x >= 0 && x < N && y >= 0 && y < M) {
+		if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5 || map[x][y] == 6) {
+			if (ss >= 2) {
+				dis[start][map[x][y]] = min(dis[start][map[x][y]], ss);
+				return;
+			}
+			return;
+		}
+
+		x += dix[dir]; y += diy[dir];
+		ss++;
+	}
+}
+
+int result = 987654321;
+void PP() {
+	system("cls");
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << visited[i][j] << " ";
+		}cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < 10; i++) { cout << island[i] << " "; }cout << endl;
+	system("pause");
+}
+void DFS(int x, int y) {
+	int land = map[x][y];
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < M) {		//같은 섬을 만났다면
+			if (map[dx][dy] == land && visited[dx][dy] == false) { visited[dx][dy] = true; DFS(dx, dy); visited[dx][dy] = false; }
+			else if (map[dx][dy] == 0) {		//바다를 만났다면
+				meetSea(dx, dy, i, map[x][y]);
+			}
+		}
+	}
+}
+void reset() {
+	for (int i = 1; i < num; i++) {
+		island[i] = true;
+	}
+}
+vector<pair<int, int>> cir;	//순환이 되는 구조인지 확인하기위한 벡터
+int order[11];
+bool orderVisited[11];
+bool connect[11][11];
+bool cvisited[11];
+bool chkCir() {
+	for (int i = 1; i < num; i++) {
+		cvisited[i] = false;
+		for (int j = 1; j < num; j++) {
+			connect[i][j] = false;
+		}
+	}
+	for (int i = 0; i < cir.size(); i++) {
+		connect[cir[i].first][cir[i].second] = true;
+		connect[cir[i].second][cir[i].first] = true;
+	}
+	int cnt = 1;
+	queue<int> q;
+	q.push(1);
+
+	while (q.size() != 0) {
+		int cur = q.front();
+		q.pop();
+		if (cnt == num) { return true; }
+		for (int i = 1; i < num; i++) {
+			if (connect[cur][i] == true && cvisited[i] == false) {
+				q.push(i);
+				cvisited[i] = true;
+				cnt++;
+			}
+		}
+	}
+	return false;
+}
+
+void makeOrder(int cnt, int range) {
+	//순서가 정해졌을때 미리 저장해놓은 섬사이의 거리값을 대입함
+	cir.clear();
+	int sum = 0;
+	for (int i = 0; i < cnt; i++) {
+		cir.push_back({ bridge[order[i]][0] ,bridge[order[i]][1] });
+		sum += bridge[order[i]][2];
+	}
+	if (chkCir() == true) { result = min(result, sum); ;return; }
+
+	for (int i = range; i < bridge.size(); i++) {
+
+		order[cnt] = i;
+		makeOrder(cnt + 1, i + 1);
+
+	}
+}
+
+void Solve() {
+	divide();	//섬에 번호를붙여줌
+	for (int i = 0; i < N; i++) {		//다리의 최단거리르 저장
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 1 || map[i][j] == 2 || map[i][j] == 3 || map[i][j] == 4 || map[i][j] == 5 || map[i][j] == 6) {
+				visited[i][j] = true;
+				DFS(i, j);
+				visited[i][j] = false;
+
+			}
+		}
+	}
+
+	for (int i = 1; i < num; i++) {
+		for (int j = i+1; j < num; j++) {
+			if (dis[i][j] != 987654321) {
+				vector<int> v;
+				v.push_back(i);
+				v.push_back(j);
+				v.push_back(dis[i][j]);
+				bridge.push_back(v);
+			}
+		}
+	}
+	makeOrder(0, 0);
+	if (result == 987654321) { result = -1; }
+	cout << result << endl;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
+
 
 ------------------------------처음에 작성했던 코드---------------------------
 #include <algorithm>
