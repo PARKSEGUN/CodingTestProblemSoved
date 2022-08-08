@@ -1,0 +1,162 @@
+첫번째로 풀었던 방법은 일일이 직접 탐색을 해보는 방식으로 작성했다.
+하지만 너무 코드가 난해하고 복잡해 져서 알아보니 각 섬들의 거리를 미리 저장해놓는 방법도 있었다.
+
+------------------------------처음에 작성했던 코드---------------------------
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include<climits>
+#include<windows.h>
+
+#define endl "\n"
+
+using namespace std;
+int N, M;
+int map[11][11];
+bool island[10];	//섬을 모두 방문하기위한 bool 변수
+
+void DFS(int x, int y);
+void Input() {
+	
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int dix[4] = { 0,0,1,-1 }; //오른쪽,왼쪽,아래,위
+int diy[4] = { 1,-1,0,0 };
+bool visited[11][11];
+int num = 1;
+void print() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << map[i][j] << " ";
+		}cout << endl;
+	}
+}
+
+void divide() {		//구역을 알기쉽게 번호로 저장
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (visited[i][j] == false && map[i][j] == 1) {
+				visited[i][j] = true;
+				queue<pair<int, int>> q;
+				q.push({ i,j });
+				map[i][j] = num;
+				island[num] = 1;
+				while (q.size() != 0) {
+					int xx = q.front().first;
+					int yy = q.front().second;
+
+					q.pop();
+					for (int i = 0; i < 4; i++) {
+						int dx = xx + dix[i];
+						int dy = yy + diy[i];
+						if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+							if (visited[dx][dy] == false && map[dx][dy] == 1) {
+								visited[dx][dy] = true;
+								q.push({ dx,dy });
+								map[dx][dy] = num;
+							}
+						}
+					}
+				} num++;
+			}
+		}
+	}
+}
+
+bool finish() {
+	for (int i = 0; i < 11; i++) { if (island[i] == 1) { return false; } }
+	return true;
+}
+
+int sum = 0;
+void meetSea(int x,int y,int dir) {
+	int ss = 0;
+	while (x >= 0 && x < N && y >= 0 && y < M) {
+			if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5 || map[x][y] == 6) {
+				if (island[map[x][y]] == true) {
+					if (visited[x][y] == false&&ss>=2) {
+						visited[x][y] = true;
+						island[map[x][y]] = false;
+						sum += ss;
+						//if (finish()) { cout << x << " " << y << " | " << sum << " | " << dir << endl; system("pause"); }
+						DFS(x, y);
+						visited[x][y] = false;
+						sum -= ss;
+						island[map[x][y]] = true;
+						return;
+					}
+				}
+				return;
+			}
+		x += dix[dir]; y += diy[dir];
+		ss++;
+	}
+}
+int result=987654321;
+void PP() {
+	system("cls");
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cout << visited[i][j] << " ";
+		}cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < 10; i++) { cout << island[i] << " "; }cout << endl;
+	system("pause");
+}
+void DFS(int x ,int y) {
+	PP();
+	if (finish() == true) { result = min(result, sum);  return; }
+	int land = map[x][y];
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < M) {		//같은 섬을 만났다면
+			if (map[dx][dy] == land && visited[dx][dy] == false) { visited[dx][dy] = true; DFS(dx, dy); /*visited[dx][dy] = false;*/ }
+			else if (map[dx][dy] == 0) {		//바다를 만났다면
+				meetSea(dx, dy, i);
+			}
+		}
+	}
+}
+void reset() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			visited[i][j] = false;
+		}
+	}
+}
+void Solve() {
+	cout << endl;
+	divide();
+	print();
+	system("pause");
+	reset();
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 1 || map[i][j] == 2 || map[i][j] == 3 || map[i][j] == 4 || map[i][j] == 5 || map[i][j] == 6) {
+				island[map[i][j]] = false;
+				visited[i][j] = true;
+				DFS(i, j);
+				if (result == 987654321) { result = -1; }
+				cout << result;
+				return;
+			}
+		}
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
