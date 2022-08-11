@@ -1,5 +1,73 @@
 위상정렬을 사용해서 순서를 먼저 구한뒤에 그 정렬된 순서를 통해서 시간을 계산하였다.
+다이나믹 프로그래밍을 사용해서도 해결할 수 있는 것 같아 풀어봤는데 해결했다.
+--------------------다이나믹 프로그래밍--------------------
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
 
+using namespace std;
+
+int N, M;
+int degree[11111];
+vector<vector<int>> rev(11111);
+vector<vector<int>> vec(11111);
+int T[11111];
+
+queue<int> q;
+void Input() {
+	cin >> N;
+	for (int i = 1; i <= N; i++) {
+		cin >> T[i];
+		int a;
+		cin >> a;
+		for (int j = 0; j < a; j++) {
+			int b;
+			cin >> b;
+			vec[b].push_back(i);
+			rev[i].push_back(b);
+			degree[i]++;
+		}
+	}
+	for (int i = 1; i <= N; i++) {
+		if (degree[i] == 0) { q.push(i); }
+	}
+}
+vector<int> result;
+int dp[11111];
+int XXX;
+int DFS(int x) {
+	if (dp[x] != 0) { return dp[x]; }
+	else {
+		int MAX = 0;
+		for (int i = 0; i < rev[x].size(); i++) {
+			MAX = max(MAX, DFS(rev[x][i]));
+		}
+		dp[x] = T[x] + MAX;
+		return dp[x];
+	}
+}
+void Solve() {
+	for (int i = 1; i <= N; i++) {
+		if (rev[i].size() == 0) { dp[i] = T[i]; }
+	}
+	for (int i = 1; i <= N; i++) {
+		dp[i] = DFS(i);
+	}
+	for (int i = 1; i <= N; i++) { XXX = max(XXX, dp[i]); }
+	cout << XXX;
+
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
+---------------위상정렬---------------------
 #include<iostream>
 #include<vector>
 #include<queue>
