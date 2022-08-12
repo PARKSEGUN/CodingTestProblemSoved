@@ -1,0 +1,56 @@
+처음에 시간초별로 동생이 갈 수 있는 거리를 배열에 다 저장해 놓고, 수빈이가 매초 탐색하면서 자신의 현재 초에 동생의 위치에 도달할 수 있는가 판단하려 했다만 메모리 초과
+그 이유는 수빈이는 +1,-1을 가지고 있어서 중복케이스가 존재하기 때문...
+그렇다고 이것을 visit처리로 막으면 +1,-1을 번갈아가면서 수빈이 동생 위치에 도달할 수 있는 케이스가 다 막아짐.
+2초 마다 중복되는 지점이있고 2초마다 원래있던 자리로 돌아올수 있다는 점을 이용해야함.
+따라서 이에 대한 해결로 수빈이가 어떤 위치에 도달했을 때 짝수 시간에 도착하는가 홀수 시간에 도착하는가로 판단.
+예를 들어 2초에 14라는 위치에 처음 도달한다면 수빈이는
+4,6,8,10,12,,,,,, 2초이후의 모든 짝수초에 14에 도달할 수 있음 따라서 동생이 위치하고 있는지점에 짝수나 홀수 visited 가 불이 켜져있다면 만날 수 있는 것이다.
+visited[K + cnt * (cnt + 1) / 2][cnt % 2] == true 를 사용해서 도착여부를 판단할 수 있음.
+정신 똑바로 차리자 [cnt+1%2] 이 연산자의 우선순위 때문에 시간낭비함.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+int N, K;
+
+void Input() {
+	cin >> N >> K;
+}
+bool visited[500001][2];
+
+void BFS() {
+	queue<pair<int, int>> subin;
+	subin.push({ N,0 });
+	visited[N][0] = true;
+	while (subin.size() != 0) {
+		int x = subin.front().first;
+		int cnt = subin.front().second;
+		subin.pop();
+		if (K + cnt * (cnt + 1) / 2 > 500000) { cout << -1; return; }	//범위를 벗어남
+
+		if (visited[K + cnt * (cnt + 1) / 2][cnt % 2] == true) { cout << cnt; return; }		//동생과 만남 
+		//cout << K + cnt * (cnt + 1) / 2 << " " << cnt % 2 << " " << visited[K + cnt * (cnt + 1) / 2][cnt % 2] << endl;
+		if (x * 2 <= 500000 && visited[x * 2][(cnt + 1) % 2] == false) {	subin.push({ x * 2,cnt + 1 }); visited[x * 2][(cnt + 1) % 2] = true;}
+		if (x + 1 <= 500000 && visited[x + 1][(cnt + 1) % 2] == false) { subin.push({ x + 1,cnt + 1 }); visited[x + 1][(cnt + 1) % 2] = true; }
+		if (x - 1 >= 0 && visited[x - 1][(cnt + 1) % 2] == false) { subin.push({ x - 1,cnt + 1 }); visited[x - 1][(cnt + 1) % 2] = true; }
+	}
+	cout << -1;
+}
+void Solve() {
+	BFS();
+
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+
+
+}
