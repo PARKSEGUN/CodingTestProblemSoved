@@ -1,0 +1,153 @@
+처음에는 모든 경우의수를 탐색하면 시간초과가 발생할것이라고 생각해서 다음에 가야하는 곳에 한번에 갈 수 있는지를 알아낼 수 있는 식을 사용해서 이동하게 하려고 했지만
+나이트나, 룩, 비숍으로도 이동하지 못하는 곳을 해결할 수 없어서 시간을 너무 많이 써서 결국 해답을 확인하기로 했다.
+처음에 코드를 작성할때 각 숫자가 들어있는 곳의 좌표를 구하기위해서 나는 함수를 작성해서 구해주었지만, 너무나도 쉽게 입력을 받으면서 저장할 수 있었다.
+충분히  생각할 수 있었지만, 문제에 너무 집중하지 못했던것 같다.
+풀이방법은 BFS를 사용하고 queue에는 <x좌표,y좌표,현재 말의 종류,현재 위치한 숫자,이동횟수> 이렇게 저장해준다.
+말을 변환하는 과정도 1분이 사용되기때문에 말변환 코드부터 작성해주고 그 밑으로 나이트, 비숏, 룩 순으로 각각 탐색할 수 있는 곳을 모두 탐색해서 queue에 넣어준다.
+여기서 중복처리를 안해주면 시간초과가 발생하기때문에 visited 를 설정해주어야되는데, visited는 [x좌표][y좌표][말의 종류][현재 위치한 숫자] 로 총 4차원 배열을 만들어준다.
+x,y 좌표는 당연하고 말의 종류나 현재 위치한 숫자는 분리해서 탐색해줘야 중복되는 상황을 피할 수 있기 때문이다.
+모든 경우를 탐색하다가 다음에 만나야 하는 숫자를 만나게된다면 queue에 현재위치한 숫자를 1 더해주고 저장해주는 식으로 BFS를 진행시키면 해결된다.
+이 문제가 들어있는 코딩테스트 3단계를 해결하면서 앞으로 마주칠 BFS문제를 확실하게 해결할 수 있게 더 열심히하자.  
+
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+int N;
+int map[11][11];
+int sx, sy;
+int numberx[111];
+int numbery[111];
+
+queue<pair<int, int>> q;		//현재 좌표
+queue<pair<int, int>> h;		//<말의 종류, cnt>
+queue<int> current;		//현재위치의 숫자
+
+int dix1[8] = { -2,-2,1,-1,2,2,1,-1 };	//나이트의 이동방법
+int diy1[8] = { 1,-1,2,2,1,-1,-2,-2 };
+
+int dix2[4] = { 1,1,-1,-1 };	//비숍의 이동방법
+int diy2[4] = { 1,-1,-1,1 };
+
+int dix3[4] = { 1,0,-1,0 };	//룩의 이동방법
+int diy3[4] = { 0,-1,0,1 };
+bool visited[11][11][111][4];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 1) { sx = i; sy = j; }
+			numberx[map[i][j]] = i;
+			numbery[map[i][j]] = j;
+		}
+	}
+}
+//말의 종류 : 1-나이트, 2-비숍, 3-룩
+
+void Solve() {
+	q.push({ sx,sy });
+	h.push({ 1,0 });
+	q.push({ sx,sy });
+	h.push({ 2,0 });
+	q.push({ sx,sy });
+	h.push({ 3,0 });
+	current.push(1);
+	current.push(1);
+	current.push(1);
+	visited[sx][sy][1][1] = true;
+	visited[sx][sy][1][2] = true;
+	visited[sx][sy][1][3] = true;
+
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int y = q.front().second;
+		int horse = h.front().first;
+		int cnt = h.front().second;
+		int cur = current.front();
+		
+		q.pop(); h.pop(); current.pop();
+		if (cur == N*N) { cout << cnt; return; }	//도착
+
+		for (int i = 1; i <= 3; i++) {		//말 변환
+			if (visited[x][y][cur][i] == true) { continue; }
+			if (horse != i) {
+				visited[x][y][cur][i] = true;
+				q.push({ x,y }); h.push({ i,cnt + 1 }); current.push(cur);
+			}
+		}
+
+		if (horse == 1) {
+			for (int i = 0; i < 8; i++) {
+				int dx = x + dix1[i];
+				int dy = y + diy1[i];
+
+				if (dx < 0 || dx >= N || dy < 0 || dy >= N) { continue; }
+
+				if (visited[dx][dy][cur][horse] == true) { continue; }
+
+
+
+				if (dx == numberx[cur + 1] && dy == numbery[cur + 1]) {
+					q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur + 1); visited[dx][dy][cur + 1][horse] = true;
+				}
+				else {
+					q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur); visited[dx][dy][cur][horse] = true;
+				}
+			}
+		}
+		if (horse == 2) {
+			for (int i = 0; i < 4; i++) {
+				for (int k = 0; k < 11; k++) {
+					int dx = x + dix2[i] * k;
+					int dy = y + diy2[i] * k;
+
+					if (dx < 0 || dx >= N || dy < 0 || dy >= N) { continue; }
+
+					if (visited[dx][dy][cur][horse] == true) { continue; }
+
+
+
+					if (dx == numberx[cur + 1] && dy == numbery[cur + 1]) {
+						q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur + 1); visited[dx][dy][cur + 1][horse] = true;
+					}
+					else {
+						q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur); visited[dx][dy][cur][horse] = true;
+					}
+				}
+			}
+		}
+		if (horse == 3) {
+			for (int i = 0; i < 4; i++) {
+				for (int k = 0; k < 11; k++) {
+					int dx = x + dix3[i] * k;
+					int dy = y + diy3[i] * k;
+
+					if (dx < 0 || dx >= N || dy < 0 || dy >= N) { continue; }
+
+					if (visited[dx][dy][cur][horse] == true) { continue; }
+
+
+
+					if (dx == numberx[cur + 1] && dy == numbery[cur + 1]) {
+						q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur + 1); visited[dx][dy][cur + 1][horse] = true;
+					}
+					else {
+						q.push({ dx,dy }); h.push({ horse,cnt + 1 }); current.push(cur); visited[dx][dy][cur][horse] = true;
+					}
+				}
+			}
+		}
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
