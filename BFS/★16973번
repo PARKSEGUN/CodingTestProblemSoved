@@ -1,0 +1,93 @@
+간단한 문제였지만 처음에 도착지점을 발견하기 까지 모든 경우의 수를 확인 했어야해서 시간 초과가 발생하였다.
+직사각형이 위치하지 못하는 곳을 먼저 visited 처리를 해놓고 하려고 할까 했지만 너무 좋은 방법이라고 생각하지않아서 고민하던중에
+찾아보니까 처음직사각형이 위치한 곳은 1이 없다라는점이 핵심이였다.
+블록은 한칸씩이동하기때문에 한칸을 이동하고 확인해야되는것은 직사각형 전체가아니라 이동하기 전 직사각형과 겹쳐지지 않는 부분만 탐색해보면 되는것이였다.
+문제를 확인하고 문제를 해결하더라도 조금더 효율적은 방법은 없었을지를 생각해보자
+
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+int N, M;
+bool map[1111][1111];
+int n, m;
+int sx, sy;
+int fx, fy;
+void Input() {
+	cin >> N >> M;
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			cin >> map[i][j];
+		}
+	}
+	cin >> n >> m >> sx >> sy >> fx >> fy;
+}
+
+bool Incheck(int x,int y,int dir) {
+	if (x > 0 && x <= N && y > 0 && y <= M) {
+		if (x + n - 1 > 0 && x + n - 1 <= N && y + m - 1 > 0 && y + m - 1 <= M) {
+			if (dir == 0) {
+				for (int i = 0; i < m; i++) {
+					if (map[x + n - 1][y + i] == 1) { return false; }
+				}
+			}
+			else if (dir == 1) {
+				for (int i = 0; i < m; i++) {
+					if (map[x][y + i] == 1) { return false; }
+				}
+			}
+			else if (dir == 2) {
+				for (int i = 0; i < n; i++) {
+					if (map[x+i][y +m-1] == 1) { return false; }
+				}
+			}
+			else if (dir == 3) {
+				for (int i = 0; i < n; i++) {
+					if (map[x+i][y] == 1) { return false; }
+				}
+			}
+			return true;
+		}
+	}
+	return false;
+}
+queue<pair<int, int>> q;
+queue<int> c;
+int dix[4] = { 1,-1,0,0 };
+int diy[4] = { 0,0,1,-1 };
+bool visited[1111][1111];
+void Solve() {
+	q.push({ sx,sy });
+	c.push(0);
+	visited[sx][sy] = true;
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int y = q.front().second;
+		int cnt = c.front();
+		if (x == fx && y == fy) { cout << cnt; return; }
+		q.pop(); c.pop();
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (Incheck(dx, dy,i) == true && visited[dx][dy] == false) {
+				visited[dx][dy] = true;
+				q.push({ dx,dy });
+				c.push(cnt + 1);
+			}
+		}
+	}
+	cout << -1;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+
+
+}
+
