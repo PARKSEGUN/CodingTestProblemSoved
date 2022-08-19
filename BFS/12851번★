@@ -1,0 +1,73 @@
+문제를 보고 간단한 BFS 문제라고 생각해서 무작정 풀어나갔다.
+일단 같은 결과값을 갖는 애들의 수를 구한게 아니라 먼저 최단 값이 나오는지를 먼저봤고 
+최솟값이 제대로 나와서 어떻게 하면 최솟값이 몇개나오는지를 알 수 있을지를 생각했다.
+우선 visited 를 사용해서 무한루프를 막아야하고 0에서 3 까지가는 이러한 반례들을 해결할 수 있어야했다.
+처음 생각했던 방법은 cnt 즉 이동 횟수에 따른 visited 배열을 만들어주기로 했다.
+visited[111111][111] 이동횟수의 최대값을 제대로 알 수가 없어서 111로 지정해서 해결하려했다.
+하지만 cnt도 같고 결과값도 같은데 방법이 다른 반례가 있었다. 이 반례가 바로 ( 0 , 3 ) 이다.
+이 반례를 해결하기 위해 그럼 현재까지 사용된 덧셈,뺄셈,곱셈의 개수를 저장을 하자고 생각했다.
+visited를 4차원 배열로 만들어주는것이다. 이것또한 최대로 몇개씩들어가는지 알 수가 없기에 visited[111111][22][22][22] 로 지정해줬다.
+예제의 값은 제대로 잘 출력이 되었지만, 그냥 visited[111111] 배열을 만들어주고 모든 값을 탐색해보는것과 다를바 없었다.
+그래서 찾아보았더니 이 문제는 q에 넣어줄때 visited 방문처리를 해주는 것이아니라 q에 넣어주고 그 값이 q.front() 로 값을 갖고 나왔을때
+그때 vistied 방문 처리를 해주는 것이였다.
+BFS로 풀때 queue에 넣기 전에 visit을 체크해줘야지 중복으로 체크가 되지 않아 타임아웃이 발생하지 않는다고 알고 있었지만, 이 문제는 
++1 해준값과 *2 를 해준 값, 즉 0->3 으로 이동 해야할때 0 1 2 3 을 지나야하지만 여기서 1->2 갈때 +1 해준 값과 *2를 해준 방법은 서로 다른 방법이기때문에 
+이경우를 중복처리로 없애는 것이아니라 q에 둘다 넣어주어야 하기때문에 q.pop() 으로 값을 가져왔을때 visited 방문처리를 해주는 것이다.
+너무 고정된 방법으로 BFS문제를 해결하려 하지말고 조금 다양하게 방향으로 BFS를 바라보자.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+using namespace std;
+
+int N, K;
+void Input() {
+	cin >> N >> K;
+}
+
+queue<pair<int, int>> q;	//수빈이 위치, 초
+bool visited[111111];
+int result=987654321;
+int same;
+
+void Solve() {
+	q.push({ N, 0 });
+
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int cnt = q.front().second;
+
+		q.pop(); 
+		if (cnt > result) { return; }
+		if (x == K) {
+			if (result == 987654321) { result = cnt; same++; }
+			else same++;
+		}
+		visited[x] = true;
+		if (x - 1 >= 0 && visited[x-1]== false) {
+
+			q.push({ x - 1,cnt + 1 }); 
+
+		}
+		if (x + 1 <= 100000 && visited[x + 1]== false) {
+
+			q.push({ x + 1,cnt + 1 }); 
+
+		}
+		if (x*2 <=100000 && visited[x *2] == false) {
+
+			q.push({ x *2,cnt + 1 });
+
+		}
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+	cout << result << endl << same;
+}
