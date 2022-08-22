@@ -1,0 +1,115 @@
+간단한 BFS문제였다 
+처음에 주어진 맵보다 한칸 더큰 맵을 '.' 로 초기화해준다.
+후에 입력을받고 주어진 키가 존재한다면 저장하고
+BFS를 시작해주었다. 문을 만나면 열쇠를 체크하고 열쇠를 만나면 열쇠를 true  처리해주고 다시 그 좌표에서 BFS를 돌려주었다.
+왜냐하면 열쇠를 만난다면 지금까지 방문했던곳을 다시한번 방문해 보아야하기때문에 다시 BFS를 들어가주는게 효율적이라고 생각했다.
+해서 모든곳을 탐색하게된다면 나와서 문서가 있는 좌표를 저장했기때문에 쉽게 문서의 개수를 구할 수 있다.
+하지만 계속 AC를 받지못해서 질문을 올려놓았다.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+using namespace std;
+
+int T;
+int N, M;
+char map[111][111];
+bool key[26];
+bool document[111][111];	//문서를 몇개 발견했는지 알기위한 변수
+
+int dix[4] = { 1,-1,0,0 };
+int diy[4] = { 0,0,1,-1 };
+
+int result;
+void Input() {
+	for (int i = 0; i < 26; i++) { key[i] = false; }
+	cin >> N >> M;
+	for (int i = 0; i <= N+1; i++) {
+		for (int j = 0; j <= M+1; j++) {
+			map[i][j] = '.';
+		}
+	}
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			cin >> map[i][j];
+		}
+	}
+	string s;
+	cin >> s;
+	if (s[0] == '0') { return; }
+	for (int i = 0; i < s.size(); i++) { key[s[i] - 97] = true; }
+}
+
+void BFS(int a, int b) {
+	queue<pair<int, int>> q;
+	bool visited[111][111];
+	q.push({ a, b });
+	visited[a][b] = true;
+
+	while (q.size() != 0) {
+		int x = q.front().first;
+		int y = q.front().second;
+		q.pop();
+
+		
+		for (int i = 0; i < 4; i++) {
+			int dx = x + dix[i];
+			int dy = y + diy[i];
+			if (dx<0 || dx>N + 1 || dy<0 || dy>M + 1) { continue; }
+			if (visited[dx][dy] == true) { continue; }
+			if (map[dx][dy] == '.') {
+				visited[dx][dy] = true;
+				q.push({ dx,dy });
+			}
+			else if (65<=(int)map[dx][dy]&& (int)map[dx][dy]<=90) {		//대문자를 만났을때
+				if (key[map[dx][dy] - 65] == true) {
+					visited[dx][dy] = true;
+					q.push({ dx,dy });
+				}
+			}
+			else if (97 <= (int)map[dx][dy] && (int)map[dx][dy] <= 122) {		//소문자를 만났을때
+				if (key[map[dx][dy] - 97] == false) {
+					key[map[dx][dy] - 97] = true;
+					BFS(dx, dy);
+					return;
+				}
+				else {
+					visited[dx][dy] = true;
+					q.push({ dx,dy });
+				}
+			}
+			else if (map[dx][dy] == '$') {
+				document[dx][dy] = true;
+				visited[dx][dy] = true;
+				q.push({ dx,dy });
+			}
+		}
+	}
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			if (document[i][j] == true) {
+				document[i][j] = false;
+				result++;
+			}
+		}
+	}
+	cout << result<<endl;
+}
+
+void Solve() {
+	BFS(0, 0);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solve();
+		result = 0;
+	}
+}
