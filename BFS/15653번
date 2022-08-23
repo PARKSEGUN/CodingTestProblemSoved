@@ -1,0 +1,132 @@
+자신있게 해결했던 문제이다.
+공을 동시에 이동시키는 것이아닌 하나씩 이동시키기때문에 다른 공때문에 이동하지못하는 상황에서 따로 한번더 이동하게 해주는 것이 중요했던점이라고 생각한다.
+한번더 이동하게 코드를 작성하니 구멍에 들어가는 상황도 작성하기 편리했다.
+그리고 구멍에들어갔을때 다른 색의 공도 따라들어오는지를 확인하기위해 좌표를 날려주었다.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+
+using namespace std;
+
+int N, M;
+char map[15][15];
+
+int Rx, Ry;
+int Bx, By;
+int Hx, Hy;
+
+int dix[4] = { 0,0,-1,1 };
+int diy[4] = { 1,-1,0,0 };
+
+void Input() {
+
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 'B') { Bx = i; By = j; }
+			if (map[i][j] == 'R') { Rx = i; Ry = j; }
+			if (map[i][j] == 'O') { Hx = i; Hy = j; }
+		}
+	}
+}
+queue < pair<pair<int, int>, pair<int, int>>>  ball;
+queue<int> Count;
+bool visited[15][15][15][15];
+void BFS(int rx, int ry, int bx, int by) {
+	ball.push({ {rx,ry},{bx,by} });
+	Count.push(1);
+	visited[rx][ry][bx][by] = true;
+	while (ball.size() != 0) {
+		int x = ball.front().first.first;
+		int y = ball.front().first.second;
+		int xx = ball.front().second.first;
+		int yy = ball.front().second.second;
+		int cnt = Count.front();
+		ball.pop(); Count.pop();
+
+		for (int i = 0; i < 4; i++) {
+			bool redhole = false;
+			bool bluehole = false;
+			int dx = x;
+			int dy = y;
+			int dxx = xx;
+			int dyy = yy;
+			while (dx + dix[i] >= 0 && dx + dix[i] < N && dix[i] != 0 && map[dx + dix[i]][dy] != '#' && (dx + dix[i] != dxx || dy != dyy)) {
+				if (map[dx + dix[i]][dy] == 'O') {
+					redhole = true;
+					dx = -987654321; dy = -987654321;
+					break;
+				}
+				dx += dix[i];
+			}
+			while (dy + diy[i] >= 0 && dy + diy[i] < M && diy[i] != 0 && map[dx][dy + diy[i]] != '#' && (dx != dxx || dy + diy[i] != dyy)) {
+				if (map[dx][dy + diy[i]] == 'O') {
+					redhole = true;
+					dx = -987654321; dy = -987654321;
+					break;
+				}
+				dy += diy[i];
+			}
+
+			while (dxx + dix[i] >= 0 && dxx + dix[i] < N && dix[i] != 0 && map[dxx + dix[i]][dyy] != '#' && (dx != dxx + dix[i] || dy != dyy)) {
+				if (map[dxx + dix[i]][dyy] == 'O') {
+					bluehole = true;
+					dxx = -987654321; dyy = -987654321;
+					break;
+				}
+				dxx += dix[i];
+			}
+			while (dyy + diy[i] >= 0 && dyy + diy[i] < M && diy[i] != 0 && map[dxx][dyy + diy[i]] != '#' && (dx != dxx || dy != dyy + diy[i])) {
+				if (map[dxx][dyy + diy[i]] == 'O') {
+					bluehole = true;
+					dxx = -987654321; dyy = -987654321;
+					break;
+				}
+				dyy += diy[i];
+			}
+			//빨간공이 파란공때문에 이동하지 못했을 경우를 생각해서 한번더 같은 방향으로 이동시켜준다.
+			//반례 예제 입력 2번 이였다.
+			while (dx + dix[i] >= 0 && dx + dix[i] < N && dix[i] != 0 && map[dx + dix[i]][dy] != '#' && (dx + dix[i] != dxx || dy != dyy)) {
+				if (map[dx + dix[i]][dy] == 'O') {
+					redhole = true;
+					dx = -987654321; dy = -987654321;
+					break;
+				}
+				dx += dix[i];
+			}
+			while (dy + diy[i] >= 0 && dy + diy[i] < M && diy[i] != 0 && map[dx][dy + diy[i]] != '#' && (dx != dxx || dy + diy[i] != dyy)) {
+				if (map[dx][dy + diy[i]] == 'O') {
+					redhole = true;
+					dx = -987654321; dy = -1;
+					break;
+				}
+				dy += diy[i];
+			}
+			if (redhole == true && bluehole == false) { cout << cnt; return; }
+			else if (redhole == false && bluehole == false) {
+				if (visited[dx][dy][dxx][dyy] == true) { continue; }	//중복처리
+				visited[dx][dy][dxx][dyy] = true;
+				ball.push({ { dx,dy }, { dxx,dyy } });
+				Count.push(cnt + 1);
+			}
+			else { continue; }
+		}
+
+	}
+	cout << -1;
+}
+
+void Solve() {
+	BFS(Rx, Ry, Bx, By);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
