@@ -1,0 +1,51 @@
+처음에 문제를 보고서 어떻게 DP를 응용할 수 있을지 쉽게 생각은 나지않았지만
+직접 손으로 그려보고 규칙을 찾고 점화식을 찾아서 해결할 수 있었다.
+
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<memory.h>
+#include<climits>
+
+using namespace std;
+
+
+int N;
+vector<pair<int, int>> vec;
+int dp[555][555];	//[A][B] A부터B까지 곱할 때 연산수를 저장
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		int a, b;
+		cin >> a >> b;
+		vec.push_back({ a,b });
+	}
+}
+
+int DP(int start,int end) {
+	if (start >= end) { return 0; }
+	if (dp[start][end] != 0) { return dp[start][end]; }
+	if (end - start == 1) {
+		dp[start][end] = vec[start].first * vec[end].first * vec[end].second;
+		return dp[start][end];
+	}
+	dp[start][end] = INT_MAX;
+	for (int i = start; i < end; i++) {
+		dp[start][end] = min(dp[start][end], DP(start, i) + (DP(i + 1, end) + (vec[start].first * vec[i].second * vec[end].second)));
+	}
+	return dp[start][end];
+}
+
+void Solve() {
+	cout << DP(0, N - 1);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
