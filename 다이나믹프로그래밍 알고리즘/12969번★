@@ -1,0 +1,58 @@
+기본적인 Dp 유형의 문제였다.
+처음에는 맨앞에 문자를 추가하거나 맨 뒤에 문자를 추가할때에 규칙이 있는지 알아봤지만, 계속 반례가 등장하였고
+너무 그 고정적인 틀에 박혀서만 생각하다보니 시간만 낭비하고 기분만 상하고 문제도 해결하지 못했다.
+빈공간에 오른쪽에서부터 문자를 추가해주는 쉬운 방법이있었다.
+A를 추가하면 k 값인 그  특정한 쌍은 늘어나지않을것이고
+B를 추가하면 A의 개수만큼 k 가 늘어날 것이고
+C를 추가하면 A+B의 개수만큼 k 가 늘어나는 간단한 규칙이었다.
+N은 3 이상부터 시작한다해서 너무 3이라는 범위에만 신경을 써서 생각하지못했다. 좀 더 크게 보는 습관을 들이고 
+혼자서 스스로 해결하지 못했다면 확실하게 알고 넘어가자.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+using namespace std;
+
+char result[33];
+int N, K;
+void Input() {
+	cin >> N >> K;
+}
+bool dp[33][450][33][33];
+void BFS(int n,int k,int a,int b) {		//현재의 n과 k 그리고 A의 개수와 B의 개수
+	if (n == N) {
+		if (k == K) { cout << result; exit(0); }
+		else {
+			dp[n][k][a][b] = true; return;
+		}
+	}
+
+	if (dp[n][k][a][b] == true) { return ; }
+	else { dp[n][k][a][b] = true; }
+	result[n] = 'A';
+	BFS(n + 1, k, a + 1, b);
+
+	result[n] = 'B';
+	BFS(n + 1, k+a, a, b+1);
+
+	result[n] = 'C';
+	BFS(n + 1, k+a+b, a, b);
+
+
+}
+
+void Solve() {
+	BFS(0, 0, 0, 0);
+	cout << -1;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
