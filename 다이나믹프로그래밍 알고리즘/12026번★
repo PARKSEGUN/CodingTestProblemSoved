@@ -1,0 +1,58 @@
+너무 한방법만 고집하지말자
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+using namespace std;
+
+int N;
+char map[1111];
+int result = 987654321;
+int dp[1111];
+void Input() {
+	cin >> N;
+	string str;
+	cin >> str;
+	for (int i = 0; i < N; i++) { map[i] = str[i]; }
+	memset(dp, -1, sizeof(dp));
+}
+
+void DFS(int cnt, char cur, int sum) {
+	if (cnt >= N) { return; }
+	if (dp[cnt]!=-1&&dp[cnt]<=sum) { return; }
+	dp[cnt] = sum;
+	for (int i = cnt+1; i < N; i++) {
+		if (cur == 'B') {
+			if (map[i] == 'O') {
+				DFS(i, 'O', sum + ((i - cnt) * (i - cnt)));
+			}
+		}
+		else if (cur == 'O') {
+			if (map[i] == 'J') {
+				DFS(i, 'J', sum + ((i - cnt) * (i - cnt)));
+			}
+		}
+		else if (cur == 'J') {
+			if (map[i] == 'B') {
+				DFS(i, 'B', sum + ((i - cnt) * (i - cnt)));
+			}
+		}
+	}
+}
+
+
+void Solve() {
+	DFS(0, 'B', 0);
+	cout << dp[N-1];
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
