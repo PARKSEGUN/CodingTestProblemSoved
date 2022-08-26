@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+
+using namespace std;
+
+void Input() {
+
+}
+
+int dp[44][2];
+pair<int,int> fibonacci(int n) {
+	if (dp[n][0] != -1) {
+		pair<int, int> res;
+		res.first = dp[n][0]; res.second = dp[n][1];
+		return res;
+	}
+	pair<int, int> res;
+	 res.first=fibonacci(n - 1).first + fibonacci(n - 2).first;
+	 res.second = fibonacci(n - 1).second + fibonacci(n - 2).second;
+	 dp[n][0] = res.first; dp[n][1] = res.second;
+	 return res;
+
+}
+
+void Solve() {
+
+	
+	int T; cin >> T;
+	for (int i = 0; i < T; i++) {
+		memset(dp, -1, sizeof(dp));
+		dp[0][0] = 1; dp[0][1] = 0;
+		dp[1][0] = 0; dp[1][1] = 1;
+		int a; cin >> a;
+		pair<int, int> result = fibonacci(a);
+		cout << result.first << " " << result.second<<endl;
+	}
+	
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
