@@ -1,0 +1,54 @@
+모르겠다고 바로 해결하려하지말고 조금더 생각해보고 참고 계속 풀어보자
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+using namespace std;
+
+int N;
+int A, B, C;
+long long dp[55][55][55][55];
+void Input() {
+	memset(dp, -1, sizeof(dp));
+	cin >> N;
+	cin >> A >> B >> C;
+}
+
+long long  DP(int n, int a, int b, int c) {
+	if (n == 0) {
+		if (a == 0 && b == 0 && c == 0) { return 1; }
+		else return 0;
+	}
+	if (n !=0) { if (a == 0 && b == 0 && c == 0) { return 0; } }
+	if (a < 0 || b < 0 || c < 0) { return 0; }
+
+	if (dp[n][a][b][c] != -1) { return dp[n][a][b][c]; }
+	dp[n][a][b][c] = 0;
+
+	dp[n][a][b][c] += DP(n - 1, a - 1, b, c);
+	dp[n][a][b][c] += DP(n - 1, a, b - 1, c);
+	dp[n][a][b][c] += DP(n - 1, a, b, c - 1);
+	dp[n][a][b][c] += DP(n - 1, a - 1, b - 1, c);
+	dp[n][a][b][c] += DP(n - 1, a, b - 1, c - 1);
+	dp[n][a][b][c] += DP(n - 1, a - 1, b, c - 1);
+	dp[n][a][b][c] += DP(n - 1, a - 1, b - 1, c - 1);
+	dp[n][a][b][c] %= 1000000007;
+	return dp[n][a][b][c];
+
+}
+
+void Solve() {
+	DP(N, A, B, C);
+	cout << dp[N][A][B][C];
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
