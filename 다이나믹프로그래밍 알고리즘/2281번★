@@ -1,0 +1,48 @@
+DP배열을 어떻게 설정해줄 것인지를 생각하자
+무작정 설정하지말고 문제를 제대로 이해하고 설정했을때 문제는 없을지 확인하자
+꼭 혼자 힘으로 DP를 해결해보자
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+
+using namespace std;
+int name[1111];
+int N, M;
+int result = 987654321;
+int dp[1111][1111];	//dp[x][y] x까지 를 y칸이 비었을때
+void Input() {
+	memset(dp, -1, sizeof(dp));
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) { cin >> name[i]; }
+}
+
+
+int DP(int n, int  m) {	//n번번째를 넣을차례, m의 공간의 남아있음, 합, 몇번째 줄인지
+	if (n == N) { return 0; }
+	int& res = dp[n][m+1];
+	if (res != -1) { return res; }
+
+
+	res = (m + 1) * (m + 1) + DP(n+1, M - name[n]-1);
+
+
+	if (m >= name[n]) { res = min(res, DP(n + 1, m - name[n]-1)); }
+	return res;
+}
+
+void Solve() {
+	cout << DP(0, M);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
