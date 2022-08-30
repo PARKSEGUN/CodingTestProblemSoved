@@ -1,0 +1,72 @@
+처음에는 어떻게 DP를 사용해서 모든 경우의 수를 구할 수 있을지 생각하다가 처음과 같은 모양이나 ? 를 찾고 그 찾은 부분을 a 라고 한다면
+start 부터 a 그리고 a+1 부터 end 까지를 다시 DP 함수에 넣어주면 되겠다고 생각했다.
+여기서 해결해야될 부분이 양쪽 즉 start 와 end 가 같은 모양이나 ? 라면 그 안의 것들 즉 start+1 , end -1 부분을 따로 처리해 줘야한다는 것이 곤란했다.
+어떻게 하면 이 두가지 케이스를 한번의 처리하는 방법은 없을까 찾아보다가 start 와 같은 모양을 찾았고 그부분을 a 라고 한다면 (start+1, a-1) 과 (a+1,end) 로 나누어
+주게된다면 굳이 두가지 케이스로 나눌필요없이 해결할 수 있게되고 더 효율적인 코드가된다. 여기서 조건은 if(start>end) return 1; 이다.
+이렇게 알고리즘만 해결하면 된다고 생각했지만 이 문제에 키포인트는 이 문제를 해결하는 알고리즘이 아니라 출력방식이었다.
+출력방식의 조건은 5자리가 넘어간다면 5자리만 나타나게 하는 것이었다.
+생각보다 간단한것 같아서 코드를 작성하고 제출했지만 역시 통과를 받지 못했다.
+어찌어찌 어거지로 AC를 받아내었지만 시원하지가 않았다.
+많은 이와 관련된 질문들을 읽어봤지만 아직도 출력 부분을 해결하지못해서 질문을 남겼다.
+나중에라도 확실하게 이해하고 넘어가자.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+
+using namespace std;
+long long N;
+char arr[222];
+long long MOD = 100000;
+void Input() {
+	cin >> N;
+	for (long long i = 0; i < N; i++) { cin >> arr[i]; }
+}
+char open[3] = { '(','{','[' };
+char close[3] = { ')','}',']' };
+long long dp[222][222];
+bool chk;
+long long DP(long long start, long long end) {
+
+	if (start > end) { dp[start][end] = 1; return 1; }
+
+	if (dp[start][end] != -1) { return dp[start][end]; }
+
+	long long& result = dp[start][end];
+	result = 0;
+	for (long long i = 0; i < 3; i++) {
+		if (arr[start] == open[i] || arr[start] == '?') {
+			for (long long j = start + 1; j <= end; j += 2) {
+				if (arr[j] == close[i] || arr[j] == '?') {	//닫는 괄호를 만났거나 ? 를 만났을때
+					result += DP(start + 1, j - 1) * DP(j + 1, end);
+
+					if (result >= 100000) { result =MOD+result%100000; chk = true; }
+				}
+			}
+		}
+	}
+	return result;
+}
+
+void Solve() {
+	memset(dp, -1, sizeof(dp));
+	long long x = DP(0, N - 1);
+	if (x>=MOD) {
+		printf("%05lld\n", x%MOD );
+	}
+	else{
+	cout << x << "\n";
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
