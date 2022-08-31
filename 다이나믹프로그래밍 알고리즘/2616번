@@ -1,0 +1,48 @@
+재귀문안에서 for 문이 돌아가서 시간초과가 발생했다는 힌트를 받았지만 
+그래도 혼자서 해결한 DP 문제여서 뿌듯했다.
+아주 조금 DP에 대해 알게되었다! 더 노력해보자
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+int N;
+int number[55555];
+int K;
+int arrSum[55555];
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> number[i]; }
+	cin >> K;
+	for (int i = 0; i<=N-K; i++) {
+		for (int j = 0; j < K; j++) { arrSum[i] += number[i + j]; }
+	}
+}
+
+int dp[3][55555];
+int DP(int cnt,int range) {
+	if (cnt == 3||range>=N) { return 0; }
+	int& res = dp[cnt][range];
+	if (res != -1) {  return res; }
+	res = 0;
+	res = max(DP(cnt,range+1), arrSum[range] + DP(cnt + 1, range + K));
+	return res;
+}
+
+void Solve() {
+	memset(dp, -1, sizeof(dp));
+	cout<<DP(0,0);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
