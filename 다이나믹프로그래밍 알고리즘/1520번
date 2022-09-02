@@ -1,0 +1,58 @@
+dp 배열은 0으로 초기화를 하게 되면 나중에 dp값이 0으로 저장된 위치를 찾았을때 메모이제이션이 적용된것인지 아닌지를 판별하지못하고
+다시 함수에 들어가게됩니다.
+따라서 dp 값을 어떠한 값으로 설정을 해줄때에 그 값이 절대로 나올수 없는 값을 설정해주어야 합니다!
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+long long N,M;
+int map[555][555];
+void Input() {
+	cin >> N>>M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) { cin >> map[i][j]; }
+	}
+}
+
+long long dp[555][555];
+
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+long long DP(int x, int y) {
+	if (x == 0 && y == 0) { return 1; }
+	long long& res = dp[x][y];
+	if (res != -1) { return res; }
+	long long sum = 0;
+	for (int i = 0; i < 4; i++) {
+		int dx = x + dix[i];
+		int dy = y + diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+			if (map[dx][dy] > map[x][y]) {
+				sum += DP(dx, dy);
+			}
+		}
+	}
+	res = max(res, sum);
+	return res;
+}
+
+void Solve() {
+	memset(dp, -1, sizeof(dp));
+	cout<<DP(N-1,M-1)<<endl;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+		Input();
+		Solve();
+
+}
