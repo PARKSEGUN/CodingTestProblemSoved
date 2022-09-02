@@ -1,0 +1,58 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+int N,K;
+int build[1111];	//건물 세우는 시간
+queue<int> q[1111];
+int END;
+void Input() {
+	cin >> N >> K;
+	for (int i = 1; i <= N; i++) { cin >> build[i]; }
+	for (int i = 0; i < K; i++) {
+		int a, b;
+		cin >> a >> b;
+		q[b].push(a);
+	}
+
+	cin >> END;
+}
+int dp[1111];
+int DP(int end) {
+	int& res = dp[end];
+	if (res != -1) { return res; }
+	res = 0;
+
+	while(q[end].size()!=0){
+		res =max(res, DP(q[end].front()));
+		q[end].pop();
+	}
+	return res+=build[end];
+}
+
+void Solve() {
+	memset(dp, -1, sizeof(dp));
+	for (int i = 1; i <= N; i++) { if (q[i].size() == 0) { dp[i] = build[i]; } }
+	cout << DP(END)<<endl;
+	for (int i = 1; i <= N; i++) {
+		while (q[i].size() != 0) { q[i].pop(); }
+	}
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int T;
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solve();
+	}
+
+}
