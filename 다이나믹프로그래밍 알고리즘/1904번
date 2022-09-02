@@ -1,0 +1,33 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+long long N;
+void Input() {
+	cin >> N;
+}
+
+
+long long dp[1111111];
+
+void Solve() {
+	int MOD = 15746;
+	dp[0] = 0; dp[1] = 1; dp[2] = 2;
+	for (long long i = 3; i <= N; i++) {
+		dp[i] =( dp[i - 2] + dp[i - 1])%MOD;
+	}
+	cout << dp[N];
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	Input();
+	Solve();
+}
