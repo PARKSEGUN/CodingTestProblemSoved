@@ -1,0 +1,46 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+int N;
+int map[2][111111];
+int dp[111111][2];	//[x][0]은 x까지중 위에값을 뽑았을때 최대, [x][1]아래값 최대
+void Input() {
+	cin >> N;
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			dp[j][i] = 0;
+		}
+	}
+}
+
+void Solve() {
+	dp[0][0] = map[0][0]; dp[0][1] = map[1][0];
+	dp[1][0] = dp[0][1] + map[0][1];
+	dp[1][1] = dp[0][0] + map[1][1];
+	for (int i = 2; i < N; i++) {
+		dp[i][0] = dp[i - 1][1] + map[0][i];
+		dp[i][1] = dp[i - 1][0] + map[1][i];
+
+		dp[i][0] = max(dp[i][0], dp[i - 2][1] + map[0][i]);
+		dp[i][1] = max(dp[i][1], dp[i - 2][0] + map[1][i]);
+	}
+	cout << max(dp[N - 1][0], dp[N - 1][1])<<endl;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int T;
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		Input();
+		Solve();
+	}
+}
