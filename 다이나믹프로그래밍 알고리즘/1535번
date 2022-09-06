@@ -1,0 +1,117 @@
+DP로는 방법이 생각나지 않아서 DFS로 해결했더니 8ms 시간이 걸렸고 다시 DP 로 코드를 작성해보니 0ms 라는 시간이걸렸다.
+DP는 해결하는 방법은 DFS비해서 어려운 편이지만 확실히 속도에서 빠르다는 것을 다시 알게되었다.
+DP는 좋은 알고리즘인거 같다. DP 알고리즘을 많이 연습해두자.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+int N;
+int HP[22];
+int Happy[22];
+
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) { cin >> HP[i]; }
+	for (int i = 0; i < N; i++) { cin >> Happy[i]; }
+}
+bool visited[22];
+int result;
+int dp[111];
+void DFS(int hp, int sum, int range) {
+	if (range == N) { result = max(result, sum); return; }
+
+	for (int i = range; i <= N; i++) {
+		if (i == N) { DFS(hp, sum, i); }
+		else if (hp - HP[i] > 0) {
+			if (visited[i] == false) {
+				visited[i] = true;
+				hp -= HP[i];
+				if (hp > 0) { sum += Happy[i]; }
+				DFS(hp, sum, i+1);
+				if (hp > 0) { sum -= Happy[i]; }
+				hp += HP[i];
+				visited[i] = false;
+			}
+		}
+	}
+}
+void Solve() {
+	DFS(100, 0, 0);
+	cout << result;
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+int N;
+int HP[22];
+int Happy[22];
+
+void Input() {
+	cin >> N;
+	for (int i = 1; i <= N; i++) { cin >> HP[i]; }
+	for (int i = 1; i <= N; i++) { cin >> Happy[i]; }
+}
+bool visited[22];
+int result;
+int dp[22][111];		//[만난 사람수][체력]
+
+void Solve() {
+	for (int i = 1; i <= N; i++) {
+		for (int j = 0; j <=100; j++) {
+			if (j + HP[i] < 100) {
+				dp[i][j] = max(dp[i - 1][j], dp[i - 1][j + HP[i]] + Happy[i]);
+			}
+			else {
+				dp[i][j] = max(dp[i][j], dp[i - 1][j]);
+			}
+
+			result = max(dp[i][j], result);
+		}
+	}
+	cout << result;
+	
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+
+}
