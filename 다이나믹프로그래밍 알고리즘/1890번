@@ -1,0 +1,48 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+int N;
+long long map[111][111];
+void Input() {
+	cin >> N;
+	for (long long i = 0; i < N; i++) {
+		for (long long j = 0; j < N; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+
+long long dp[111][111];
+void Solve() {
+	dp[0][0] = 1;
+	for (long long i = 0; i < N; i++) {
+		for (long long j = 0; j < N; j++) {
+			if (dp[i][j] > 0&&map[i][j]!=0) {
+				if (i + map[i][j] < N) { dp[i + map[i][j]][j] += dp[i][j]; }
+				if (j + map[i][j] < N) { dp[i][j + map[i][j]] += dp[i][j]; }
+			}
+		}
+	}
+	/*for (long long i = 0; i < N; i++) {
+		for (long long j = 0; j < N; j++) {
+			cout << dp[i][j] << " ";
+		}cout << endl;
+	}*/
+	cout << dp[N - 1][N - 1];
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+
+}
