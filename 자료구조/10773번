@@ -1,0 +1,39 @@
+//전에 풀었던 스택연산과 관련된 문제이다 똑같이 top이라는 꼭대기를 설정해주고 0아 아닌수라면 넣어주고 0이라면 빼주는 코드를 작성했다.
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<string>
+#include<memory.h>
+
+using namespace std;
+
+int K;
+int sum;
+int arr[111111];
+int top=-1;
+void Input() {
+	cin >> K;
+	for(int i=0;i<K;i++){
+		int x; cin >> x;
+		if (x == 0) { arr[top] = 0; top--; }
+		else { top++; arr[top] = x; }
+	}
+	for (int i = 0; i <= top;i++) { sum += arr[i]; }
+	cout << sum;
+}
+
+void Solve() {
+	
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	Solve();
+
+}
