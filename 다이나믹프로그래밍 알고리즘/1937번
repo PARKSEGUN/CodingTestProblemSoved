@@ -1,0 +1,64 @@
+dp를 설정할 수 있다면 쉽게 해결할 수 있는 문제였다
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+#include<memory.h>
+#include<climits>
+#include<string>
+
+
+using namespace std;
+int N;
+int map[555][555];
+void Input() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+int dp[555][555];	//dp[x][y]=a -> (x,y)에서 갈수있는 최대 이동거리 a
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+int result = 0;
+int  DP(int x,int y){
+	int& res = dp[x][y];
+	if (res != 0) { return res; }
+	res = 1;
+	for (int i = 0; i < 4; i++) {
+		int dx = x+dix[i];
+		int dy = y+diy[i];
+		if (dx >= 0 && dx < N && dy >= 0 && dy < N) {
+			if (map[x][y] < map[dx][dy]) {
+				//cout << dx << " " << dy << endl; system("pause"); 
+				res = max(res, DP(dx, dy) + 1);
+
+			}
+		}
+	}
+	result = max(result, res);
+	return res;
+}
+
+void Solve() {
+	
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			DP(i, j);
+		}
+	}
+	cout << result;
+}
+
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+		Input();
+		Solve();
+
+}
