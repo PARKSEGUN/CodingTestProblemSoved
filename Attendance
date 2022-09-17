@@ -25,4 +25,3 @@ int main(void) {
 	cout.tie(NULL);
 	Solve();
 }
-
