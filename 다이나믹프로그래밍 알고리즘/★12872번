@@ -1,0 +1,54 @@
+dp 에 대해서 어느정도 감을 잡았다고 생각했지만 이 문제를 만나고 아직 더 노력해야겠다고 생각했다.
+문제가 살짝만 다르게 나와도 해결하지 못하는 걸 보고 dp 설정하는 방법을 더 공부해야겠다.
+
+
+
+
+#include<iostream>
+#include <string>
+#include <vector>
+#include<algorithm>
+#include<memory.h>
+
+#define endl "\n"
+using namespace std;
+
+long long N, M, P;
+
+void Input() {
+	cin >> N >> M >> P;
+}
+
+long long dp[111][111];
+long long DP(long long cnt,long long pick) {	//(현재 뽑은 곡수, 선택한 곡수)
+	long long nopick = N - pick;	//선택하지 않은 곡수
+	long long& res = dp[cnt][pick];	//편하게 코딩하기위해
+	if (cnt == P) {	//현재까지 추가한 곡의 수가 P값과 같다면, 즉 종료시점을 의미함 (basecase)
+		if (nopick == 0) { return 1; }		//선택하지 않은 곡의수가 없다면 1을 반환해서 값 유지
+		else { return 0; }		//현재까지 추가한 곡의수가 P 와 같지만 하직 선택하지 않은 곡의 수가 남아있다면 0으로 바꿈
+	}
+
+	if (res != -1) { return res; }		//dp 값이 존재한다면 리턴
+	res = 0;	//dp 값은 -1로 초기화했기때문에 0으로 다시 초기화
+
+	if (nopick > 0) { res += DP(cnt + 1, pick + 1) * nopick; }
+	//아직 선택하지 않은 곡이 존재한다면 선택하지 않았던 곡을 하나 선택하는 경우의수에 선택하지 않은 곡의 수를 곱해준다( 경우의수)
+	if (pick > M) { res += DP(cnt + 1, pick) * (pick - M); }
+	//그리고 선택한 곡의 수가 M값을 넘어갔다면 M칸 전에 사용했던 값을 다시 사용할 수 있으므로
+	res %= 1000000007;
+	return res;
+}
+
+void solution() {
+	memset(dp, -1, sizeof(dp));
+	cout << DP(0,0);
+}
+
+int main(void) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	Input();
+	solution();
+}
