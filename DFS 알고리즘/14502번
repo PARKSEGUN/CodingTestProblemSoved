@@ -1,0 +1,103 @@
+1년전에 풀어보고 지금 다시 풀어봤던 문제이다.
+1년 전에 해결했을때는 바이러스의 전파를 DFS 해결했고 지금 다시 해결했을때는 BFS로 해결했다.
+시간 차이가 크게 나지 않을거라고 생각했고 전파하는 개념은 BFS가 더 가깝다고 생각해서 BFS로 해결했지만
+DFS로 해결했을때 보다 시간이 더 걸렸다 전파를 하는 개념에서도 BFS보다 DFS가 더 빠르고 효율적
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+
+using namespace std;
+
+int N, M;
+int map[11][11];
+int submap[11][11];
+
+void input() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+}
+
+int dix[4] = { 0,0,1,-1 };
+int diy[4] = { 1,-1,0,0 };
+void moveVirus() {
+	bool visited[11][11] = { 0, };
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (submap[i][j] == 2 && visited[i][j] == false) {
+				visited[i][j] = true;
+				queue<pair<int, int>> q;
+				q.push({ i,j });
+				while (q.size() != 0) {
+					int x = q.front().first;
+					int y = q.front().second;
+					q.pop();
+					submap[x][y] = 2;
+					for (int i = 0; i < 4; i++) {
+						int dx = x + dix[i];
+						int dy = y + diy[i];
+						if (dx >= 0 && dx < N && dy >= 0 && dy < M) {
+							if (submap[dx][dy] == 0 && visited[dx][dy] == false) {
+								visited[dx][dy] = true;
+								q.push({ dx,dy });
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void copy() {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			submap[i][j] = map[i][j];
+		}
+	}
+}
+
+int result;
+void count0() {
+	int sum = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (submap[i][j] == 0) { sum++; }
+		}
+	}
+	result = max(sum, result);
+}
+
+void makeWall(int cnt, int x,int y) {
+	if (cnt == 3) {
+		copy();
+		moveVirus();	//바이러스 움직여주는 함수
+		count0();
+		return;
+	}
+	for (int i = x; i < N; i++) {
+		for (int j = y; j < M; j++) {
+			if (map[i][j] == 0) {
+				map[i][j] =1;
+				makeWall(cnt + 1, i, j + 1);
+				map[i][j] = 0;
+			}
+		}
+		y = 0;
+	}
+}
+
+void solution() {
+	makeWall(0, 0,0);
+	cout << result;
+}
+
+int main(void) {
+	input();
+	solution();
+}
