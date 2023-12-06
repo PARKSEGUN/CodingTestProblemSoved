@@ -24,4 +24,4 @@ int main(void) {
 	cin.tie(NULL);
 	cout.tie(NULL);
 	Solve();
-
+}
