@@ -49,3 +49,45 @@ public class Main {
 	}
 
 }
+---------------재귀를 활용한 풀이------------------------
+	package com.ssafy.test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	static int N, K, arr[], result = 1;
+
+	public static void main(String[] args) throws IOException, NumberFormatException {
+		inputValue();
+		findResult(0);
+		System.out.println(result);
+	}
+
+	static void findResult(int sum) {
+		for (int i = 0; i < K; i++) {
+			/*
+			 * 최대값이 유지되는 result를 기준에 넣어준다면 시간을 줄일 수 있다.
+			 */
+			if (N >= sum + arr[i]) {
+				result = Math.max(result, sum + arr[i]);
+				findResult((sum + arr[i]) * 10);
+			}
+		}
+	}
+
+	static void inputValue() throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer tokenizer1 = new StringTokenizer(reader.readLine());
+		StringTokenizer tokenizer2 = new StringTokenizer(reader.readLine());
+		N = Integer.parseInt(tokenizer1.nextToken());
+		K = Integer.parseInt(tokenizer1.nextToken());
+		arr = new int[K];
+		for (int i = 0; i < K; i++) {
+			arr[i] = Integer.parseInt(tokenizer2.nextToken());
+		}
+	}
+}
+
