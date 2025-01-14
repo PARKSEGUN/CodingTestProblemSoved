@@ -1,0 +1,49 @@
+처음에 cacheSize 가 0인지 확인해서 return 시켜줌
+들어온지 얼마나 지났는지 확인해주는 cache vector 사용
+cache 벡터의 크기를 지정해주기위해 x 대입
+cache 를 확인해서 지금들어올값과 같은 값이 있는지 확인.
+  아니라면 second 인자를 +1해준다 한번이 지났음을 의미
+   answer+=1;
+같은 값이있으면 second 인자를 1로 변경해주고 answer+=1
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int cacheSize, vector<string> cities) {
+    if(cacheSize==0){return cities.size()*5;}   //예외
+    int answer = 0;
+    vector<pair<string,int>>cache;
+    for(int i=0;i<cities.size();i++){
+        for(int j=0;j<cities[i].size();j++){
+            cities[i][j]=tolower(cities[i][j]);
+        }
+    }
+    for(int i=0;i<cacheSize;i++){cache.push_back({"x",cacheSize-i}); }
+    
+    for(int i=0;i<cities.size();i++){
+        bool chk=false; //같은 값이 들어있는지 확인하는 변수
+        int idx=0;  //같은 값이 존재하지않을때 가장 나중에 들어온 값의 인덱스를 저장하기위한 변수
+        int mx=0;
+        for(int j=0;j<cache.size();j++){
+            if(cities[i]==cache[j].first){
+                cache[j].second=0;
+                chk=true;   //같은 값이 들어있음
+            }
+            else{
+                if(mx<cache[j].second){idx=j;mx=cache[j].second;}
+                cache[j].second++;
+            }
+        }
+        if(chk==true){
+            answer+=1;
+        }
+        else{
+            answer+=5;
+            cache[idx].first=cities[i];
+            cache[idx].second=0;
+        }
+    }    
+    return answer;
+}

@@ -1,0 +1,60 @@
+값을 비교하는 것과 어떻게 정렬을 시킬건지가 중요했다.
+
+#include<iostream>
+#include <string>
+#include <vector>
+#include<algorithm>
+
+#define endl "\n"
+using namespace std;
+
+
+int N;
+vector<int> stagess;
+void Input() {
+	cin >> N;
+	for (int i = 0; i < 8; i++) {
+		int a;
+		cin >> a;
+		stagess.push_back(a);
+	}
+}
+
+bool compare(pair<double, int>& a, pair<double, int>& b) {
+
+	if (a.first == b.first) {
+		return a.second < b.second;
+	}
+	return a.first > b.first;
+
+}
+vector<int> solution(int N, vector<int> stages) {
+	vector<pair<int, int>> clear(N + 2);        //<도달했지만 클리어못함, 스테이지에 도달함>
+
+	for (int i = 0; i < stages.size(); i++) {
+		clear[stages[i]].first++;
+		int k = 1;
+		while (1) {
+			clear[k].second++;
+			if (k == stages[i]) { break; }
+			k++;
+		}
+	}
+
+	vector<pair<double, int>> result;
+	for (int i = 1; i <= N; i++) {
+		if (clear[i].second == 0) { clear[i].second = 1; }
+		result.push_back({ double(clear[i].first) / double(clear[i].second),i });
+	}
+	vector<int> answer;
+	sort(result.begin(), result.end(), compare);
+	for (int i = 0; i < N; i++) { answer.push_back(result[i].second); }
+
+	for (int i = 0; i < N; i++) {cout<<answer[i]<<" "; }
+	return answer;
+}
+
+int main(void) {
+	Input();
+	 solution(N, stagess);
+}

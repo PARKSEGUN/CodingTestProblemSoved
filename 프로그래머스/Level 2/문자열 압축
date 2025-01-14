@@ -1,0 +1,61 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int Plus(int cnt) {
+	int x = 1;
+	if (cnt > 9)x++;
+	if (cnt > 99)x++;
+	if (cnt > 999)x++;
+
+	return x;
+}
+int solution(string s) {
+	int answer = 987654321;
+	if (s.size() == 1) { return 1; }	//크기가 1이면 for문에 들어가지못함
+
+	for (int range = 1; range <= s.size() / 2; range++) {
+		int result = 0;
+		int start = 0;
+		int cnt = 1;	//같은 문자열이 몇개인지 저장
+
+		bool chk = false;		//범위를 넘어갔을때랑 겹치는 것을 막기위해
+		for (int cur = start + range; cur < s.size(); cur += range) {
+			bool same = false;
+			if (cur + range - 1 < s.size()) {
+				for (int k = 0; k < range; k++) {		//range 크기의 문자열 비교
+					if (s[start + k] == s[cur + k]) { same = true; }
+					else { same = false; break; }
+				}
+ 
+				if (same == true) { cnt++; }
+				else {
+					if (cnt == 1) { result += range; start = cur; }
+					else {
+						result += (range + Plus(cnt));
+						start = cur;
+						cnt = 1;
+					}
+				}
+			}
+			else { //비교해볼 대상이 s 문자열의 범위를 넘어갔을때
+				if (cnt == 1) { result += range; }
+				else {				result += (range + Plus(cnt));				}
+				result += s.size() - cur;
+				chk = true;
+				break;
+			}
+		}
+		if (chk == false) {
+			if (cnt == 1) { result += range; }
+			else {
+				result += (range + Plus(cnt));
+			}
+
+		}
+		//cout << result<<endl;
+		answer = min(result, answer);
+	}
+	return answer;
+}

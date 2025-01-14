@@ -1,0 +1,39 @@
+map 이라는 자료구조에 대해서 확실하게 알고 가자
+map은 각 노드가 key와 value 쌍으로 이루어진 트리입니다.  특히, 중복을 허용하지 않습니다.
+따라서 map은 first, second가 있는 pair 객체로 저장되는 데 first- key로 second- value로 저장됩니다. 
+C++의 map의 내부 구현은 검색, 삽입, 삭제가 O(logn) 인 레드블랙트리로 구성되어 있습니다.
+
+map은 자료를 저장할때 내부에서 자동으로 정렬합니다.
+map은 key를 기준으로 정렬하며 오름차순으로 정렬합니다. 
+만약 내림차순으로 정렬하고 싶은 경우와 같이 사용하면 됩니다.
+map <int, int, greater> map1; 
+
+map 이란 key 값 즉, 원래는 배열에 0~ 값으로 접근을 했지만 (arr[5]) map을 설정하게 해주면
+map[박세건]=1801152; 이렇게 저장할 수 있게된다 확실히 알아두면 효율적인 코딩을 할 수 있다. 
+
+#include <string>
+#include <vector>
+#include<map>
+using namespace std;
+
+vector<string> solution(vector<string> record) {
+	vector<string> answer;
+	map<string, string> ID;
+
+//문자열은 조금더 효율적으로 자를 수 있는 방법은 없나
+	for (int i = 0; i < record.size(); i++) {
+		string order = record[i].substr(0, record[i].find(' ', 0));
+		if (order == "Enter" || order == "Change") {
+			string id = record[i].substr(record[i].find(" ", 0) + 1, record[i].find(" ", 7) - record[i].find(' ') - 1);
+			string name = record[i].substr(record[i].find(' ', 7) + 1);
+			ID[id] = name;
+		}
+	}
+	for (int i = 0; i < record.size(); i++) {
+		string order = record[i].substr(0, record[i].find(' ', 0));
+		string id = record[i].substr(record[i].find(" ", 0) + 1, record[i].find(" ", 7) - record[i].find(' ') - 1);
+		if (order == "Enter" || order == "Change") { if (order == "Enter") { answer.push_back(ID[id] + "님이 들어왔습니다."); } }
+		else { answer.push_back(ID[id] + "님이 나갔습니다."); }
+	}
+	return answer;
+}
