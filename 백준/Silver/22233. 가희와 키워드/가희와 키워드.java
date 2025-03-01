@@ -26,7 +26,9 @@ public class Main {
             for (int j = 0; j < blogs.length; j++) {
                 memo.remove(blogs[j]);
             }
-            System.out.println(memo.size());
+            sb.append(memo.size()).append("\n");
         }
+        System.out.println(sb.toString());
+        
     }
 }
