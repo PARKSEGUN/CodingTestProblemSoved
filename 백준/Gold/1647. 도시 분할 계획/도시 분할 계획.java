@@ -23,8 +23,9 @@ public class Main {
         }
         Collections.sort(connInfo, Comparator.comparingInt(o -> o[2]));
         int answer = 0;
-        int max = 0;
+        int cnt = 0;
         for (int i = 0; i < connInfo.size(); i++) {
+            if (cnt == N - 2) break;
             int[] cur = connInfo.get(i);
             int from = cur[0];
             int to = cur[1];
@@ -32,10 +33,10 @@ public class Main {
             if (isNotSameParent(from, to)) {
                 union(from, to);
                 answer += val;
-                max = Math.max(max, val);
+                cnt++;
             }
         }
-        return answer - max;
+        return answer;
     }
 
     private static void union(int from, int to) {
