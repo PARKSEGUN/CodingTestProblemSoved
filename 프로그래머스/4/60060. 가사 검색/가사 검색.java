@@ -16,6 +16,7 @@ class Solution {
         return answer;
     }
     
+    
     private int getCorrectCnt(String cur){
         List<String> searchList=null;
         if(cur.charAt(0)=='?'){
