@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,70 +8,44 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	static int N;
-	static Stack<Tower> towers = new Stack<>();
-	static List<Integer> answer = new ArrayList<>();
+    private static StringTokenizer st;
+    private static StringBuilder answerString = new StringBuilder();
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static int N;
+    private static List<Integer> buildings = new ArrayList<>();
 
-	static StringBuilder resultString = new StringBuilder();
-	static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer tokenizer;
 
-	public static void main(String[] args) throws Exception {
-		N = Integer.parseInt(reader.readLine());
-		tokenizer = new StringTokenizer(reader.readLine());
-		for (int i = 0; i < N; i++) {
-			int tmp = Integer.parseInt(tokenizer.nextToken());
-			while (towers.size() > 0) {
-				if (towers.peek().getValue() < tmp) {
-					towers.pop();
-				} else {
-					break;
-				}
-			}
-			if (towers.size() == 0) {
-				answer.add(0);
-			} else {
-				answer.add(towers.peek().getIdx() + 1);
-			}
-			towers.add(new Tower(tmp, i));
-		}
-		for (int i = 0; i < N; i++) {
-			resultString.append(answer.get(i)).append(" ");
-		}
-		System.out.println(resultString);
-	}
+    public static void main(String[] args) throws IOException {
+        inputSetting();
+        solution();
+        System.out.println(answerString);
+    }
 
-}
+    private static void solution() {
+        int[] result = new int[N];
+        Stack<int[]> stack = new Stack<>();
+        for (int i = buildings.size() - 1; i >= 0; i--) {
+            int cur = buildings.get(i);
+            while (!stack.isEmpty() && cur > stack.peek()[1]) {
+                result[stack.peek()[0]] = i + 1;
+                stack.pop();
+            }
+            stack.add(new int[]{i, cur});
+        }
+        //빈칸 채우기
+        for (int i = 0; i < N; i++) {
+            answerString.append(result[i]).append(" ");
+        }
+    }
 
-class Tower {
-	private int value;
-	private int idx;
 
-	public Tower(int value, int idx) {
-		super();
-		this.value = value;
-		this.idx = idx;
-	}
+    private static void inputSetting() throws IOException {
+        N = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            buildings.add(Integer.parseInt(st.nextToken()));
+        }
+    }
 
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
-
-	public int getIdx() {
-		return idx;
-	}
-
-	public void setIdx(int idx) {
-		this.idx = idx;
-	}
-
-	@Override
-	public String toString() {
-		return value + "";
-	}
 
 }
